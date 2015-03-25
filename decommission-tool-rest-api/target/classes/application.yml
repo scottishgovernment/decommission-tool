@@ -21,3 +21,6 @@ spring:
     hibernate.ddl-auto: none
     generate-ddl: false
     show-sql: true
+authentication:
+    enabled: true
+    endpoint: http://localhost:8086/security/
