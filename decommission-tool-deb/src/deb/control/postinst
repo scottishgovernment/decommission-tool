@@ -1,0 +1,17 @@
+#!/bin/sh
+
+adduser \
+  --quiet \
+  --system \
+  --home /opt/healthcheck \
+  --no-create-home \
+  --shell /bin/bash \
+  --group \
+  --gecos "MyGov Health Check" \
+  healthcheck
+
+mkdir -p /var/log/healthcheck
+chmod 755 /var/log/healthcheck
+chown healthcheck:nogroup /var/log/healthcheck
+
+service healthcheck start

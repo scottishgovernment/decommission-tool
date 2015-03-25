@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.13/angular-resource.min.js"></script>
+</head>
+
+<body ng-app="healthcheckApp">
+<div class="container">
+    <div ng-controller="formController" class="well">
+        <form novalidate class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Path:</label>
+
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="healthcheck.path" placeholder="/about">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Url:</label>
+
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="healthcheck.url" placeholder="http://www.google.co.uk">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Status:</label>
+
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="healthcheck.status" placeholder="200">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Content Item UUID:</label>
+
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" ng-model="healthcheck.contentItemId" placeholder="">
+                </div>
+            </div>
+            <div class="btn-group" role="group">
+                <button class="btn btn-success" ng-disabled="error || incomplete" ng-click="submithealthcheck()">
+                    <span class="glyphicon glyphicon-ok"></span> Submit
+                </button>
+                <button class="btn btn-warning" ng-disabled="error || incomplete" ng-click="reset()">
+                    <span class="glyphicon glyphicon-refresh"></span> Reset
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    App = angular.module('healthcheckApp', ['ngResource']);
+
+    App.factory('healthcheck', function ($resource) {
+                return $resource('/healthcheck');
+            });
+
+    App.controller("formController", function ($scope, healthcheck) {
+                $scope.master = {url: "http://www.google.co.uk", path: "/about", status: "200"};
+                $scope.reset = function () {
+                    $scope.healthcheck = angular.copy($scope.master);
+                };
+                $scope.reset();
+
+                $scope.submithealthcheck = function () {
+                    var f = new healthcheck();
+                    f.url = $scope.healthcheck.url;
+                    f.path = $scope.healthcheck.path;
+                    f.status = $scope.healthcheck.status;
+                    f.contentItemId = $scope.healthcheck.contentItemId;
+                    f.$save().then(function (result) {
+                        alert("healthcheck submitted.  Thank you.");
+                    }, function (fail) {
+                        alert("There was a problem : "+fail);
+                    });
+                }
+            });
+
+</script>
+
+</body>
+</html>

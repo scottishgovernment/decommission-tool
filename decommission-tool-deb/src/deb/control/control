@@ -1,0 +1,8 @@
+Package: healthcheck-rest-api
+Version: [[version]]
+Section: mygov
+Priority: optional
+Architecture: all
+Description: [[description]]
+Maintainer: tim.squires@scotland.gsi.gov.uk
+Depends: java7-runtime-headless
