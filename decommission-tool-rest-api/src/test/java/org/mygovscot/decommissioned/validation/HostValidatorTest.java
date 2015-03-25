@@ -18,6 +18,9 @@ public class HostValidatorTest {
         assertTrue(hostValidator.isValid("www.server.com", null));
         assertTrue(hostValidator.isValid("1.2.3.4", null));
 
+        assertTrue(hostValidator.isValid("server server2", null));
+        assertTrue(hostValidator.isValid("1.2.3.4 5.6.7.8 ", null));
+
         assertFalse(hostValidator.isValid("http://www.server.com", null));
         assertFalse(hostValidator.isValid(":www.server.com", null));
         assertFalse(hostValidator.isValid("www.server.com/", null));
