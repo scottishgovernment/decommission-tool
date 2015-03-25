@@ -3,15 +3,15 @@
 adduser \
   --quiet \
   --system \
-  --home /opt/healthcheck \
+  --home /opt/decommission-tool \
   --no-create-home \
   --shell /bin/bash \
   --group \
-  --gecos "MyGov Health Check" \
-  healthcheck
+  --gecos "MyGov Site Decommissioning Tool" \
+  decommission
 
-mkdir -p /var/log/healthcheck
-chmod 755 /var/log/healthcheck
-chown healthcheck:nogroup /var/log/healthcheck
+mkdir -p /var/log/decommission-tool
+chmod 755 /var/log/decommission-tool
+chown decommission:nogroup /var/log/decommission-tool
 
-service healthcheck start
+service decommission start

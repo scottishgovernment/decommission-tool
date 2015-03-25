@@ -15,7 +15,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Health Check</name>
+    <name>Decommissioning Tool</name>
 
     <modules>
       <module>decommission-tool-rest-api</module>

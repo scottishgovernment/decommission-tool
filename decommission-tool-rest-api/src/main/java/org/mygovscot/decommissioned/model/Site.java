@@ -1,13 +1,17 @@
 package org.mygovscot.decommissioned.model;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.URL;
+import org.mygovscot.decommissioned.validation.Host;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -18,6 +22,8 @@ public class Site {
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     private String id;
 
+    @NotNull(message = "Please specify a host")
+    @Host(message = "Host must be a valid hostname or IP address")
     private String host;
 
     private String name;
@@ -30,7 +36,7 @@ public class Site {
 
     private String pageMatchMsg;
 
-    @OneToMany(mappedBy = "site", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL)
     private List<Page> pages;
 
     public String getId() {
@@ -89,12 +95,5 @@ public class Site {
         this.pageMatchMsg = pageMatchMsg;
     }
 
-//    public List<Page> getPages() {
-//        return pages;
-//    }
-//
-//    public void setPages(List<Page> pages) {
-//        this.pages = pages;
-//    }
 }
 

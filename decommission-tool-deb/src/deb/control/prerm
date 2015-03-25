@@ -1,2 +1,2 @@
 #!/bin/sh
-service healthcheck stop || true
+service decommission-tool stop || true

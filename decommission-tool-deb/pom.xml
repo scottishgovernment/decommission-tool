@@ -76,7 +76,7 @@
                     <controlDir>${basedir}/src/deb/control</controlDir>
                     <dataSet>
                         <data>
-                            <src>${basedir}/src/deb/init/healthcheck.conf</src>
+                            <src>${basedir}/src/deb/init/decommission-tool.conf</src>
                             <type>file</type>
                             <mapper>
                                 <type>perm</type>
@@ -84,7 +84,7 @@
                             </mapper>
                         </data>
                         <data>
-                            <src>${project.build.directory}/dependency/healthcheck-rest-api-${project.version}.jar</src>
+                            <src>${project.build.directory}/dependency/decommission-tool-rest-api-${project.version}.jar</src>
                             <dst>decommission-tool.jar</dst>
                             <type>file</type>
                             <mapper>
@@ -108,7 +108,7 @@
                             </paths>
                             <mapper>
                                 <type>perm</type>
-                                <user>decommission-tool</user>
+                                <user>decommission</user>
                                 <group>nogroup</group>
                             </mapper>
                         </data>

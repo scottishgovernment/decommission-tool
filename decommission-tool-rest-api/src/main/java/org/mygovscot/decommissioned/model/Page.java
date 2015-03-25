@@ -1,11 +1,13 @@
 package org.mygovscot.decommissioned.model;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.mygovscot.decommissioned.validation.Path;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Page {
@@ -16,10 +18,15 @@ public class Page {
     private String id;
 
     @ManyToOne
+    @NotNull
     private Site site;
 
+    @NotNull(message = "Page source must be specified")
+    @Path(message = "Source url must be a valid path")
     private String srcUrl;
 
+    @NotNull(message = "Page target must be specified")
+    @Path(message = "Target url must be a valid path")
     private String targetUrl;
 
     private String matchLevel;

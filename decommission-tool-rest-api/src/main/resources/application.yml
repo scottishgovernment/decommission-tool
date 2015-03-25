@@ -4,7 +4,7 @@ application:
 logging:
   level:
     org.springframework.web: DEBUG
-    org.mygovscot: INFO
+    org.mygovscot: DEBUG
 
 server:
     port: 8089

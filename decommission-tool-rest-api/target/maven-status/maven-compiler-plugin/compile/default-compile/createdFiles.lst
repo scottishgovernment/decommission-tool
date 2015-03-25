@@ -1,7 +1,0 @@
-org/mygovscot/healthcheck/HealthCheckApp.class
-org/mygovscot/healthcheck/config/CorsFilter.class
-org/mygovscot/healthcheck/repository/LinkRepository.class
-org/mygovscot/healthcheck/repository/validation/AbstractEventHandler.class
-org/mygovscot/healthcheck/model/MyGovLink.class
-org/mygovscot/healthcheck/config/RestDataConfig.class
-org/mygovscot/healthcheck/repository/validation/HealthCheckException.class

@@ -1,4 +1,4 @@
-Package: healthcheck-rest-api
+Package: decommission-tool-rest-api
 Version: [[version]]
 Section: mygov
 Priority: optional
