@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -58,14 +59,15 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         } else if (!"OPTIONS".equals(request.getMethod())) {
             String sessionId = getSessionId(request);
             try {
-                Session session;
-                if (StringUtils.isNotBlank(sessionId) && (session = getSession(sessionId)) != null) {
-                    SecurityContextHolder.setUser(session.getUser().getName());
-                    keepAlive(sessionId);
-                    filterChain.doFilter(request, response);
-                } else {
+                Session session = getSession(sessionId);
+                if (!isAdmin(session)) {
                     response.sendError(HttpStatus.UNAUTHORIZED.value());
+                    return;
                 }
+
+                SecurityContextHolder.setUser(session.getUser().getName());
+                keepAlive(sessionId);
+                filterChain.doFilter(request, response);
             } catch (HttpClientErrorException e) {
                 LOG.warn("Received http error.", e);
                 response.sendError(HttpStatus.UNAUTHORIZED.value(), e.getStatusText());
@@ -73,6 +75,19 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         } else {
             filterChain.doFilter(request, response);
         }
+    }
+
+    private boolean isAdmin(Session session) {
+
+        if (session == null) {
+            return false;
+        }
+        for (Role role : session.getUser().getRoles()) {
+            if ("admin".equals(role.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String getSessionId(HttpServletRequest request) {
@@ -87,6 +102,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Session getSession(String sessionId) {
+        if (StringUtils.isBlank(sessionId)) {
+            return null;
+        }
+
         ResponseEntity<Session> result = restTemplate.getForEntity(getSessionEndpoint(), Session.class, sessionId);
         if (result.getStatusCode() == HttpStatus.OK && result.getBody().isAlive()
                 && result.getBody().getUser().isActive()) {
@@ -159,7 +178,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         private String userId;
         private String name;
-
+        private List<Role> roles;
         private boolean active;
 
         public User() {
@@ -188,6 +207,50 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public List<Role> getRoles() {
+            return roles;
+        }
+
+        public void setRoles(List<Role> roles) {
+            this.roles = roles;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Role {
+        private String name;
+
+        private String description;
+
+        private boolean active;
+
+        public Role() {
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public boolean isActive() {
+            return active;
+        }
+
+        public void setActive(boolean active) {
+            this.active = active;
         }
     }
 }
