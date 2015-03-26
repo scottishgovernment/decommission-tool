@@ -22,5 +22,5 @@ spring:
     generate-ddl: false
     show-sql: true
 authentication:
-    enabled: true
+    enabled: false
     endpoint: http://localhost:8086/security/
