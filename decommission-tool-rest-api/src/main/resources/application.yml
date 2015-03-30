@@ -12,7 +12,7 @@ server:
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/decommission
+    url: jdbc:postgresql://localhost/decommission
     username: decommission
     password: decommission
     poolSize: 20
@@ -20,7 +20,7 @@ spring:
     database: POSTGRESQL
     hibernate.ddl-auto: none
     generate-ddl: false
-    show-sql: true
+    show-sql: false
 authentication:
     enabled: false
     endpoint: http://localhost:8086/security/
