@@ -16,6 +16,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan
 public class DecommissionToolApp {
 
+    DecommissionToolApp() {
+        // Spring requires that constructor is not private.
+    }
+
     public static void main(String[] args) {
         SpringApplication application = new SpringApplicationBuilder(DecommissionToolApp.class).application();
         application.addInitializers(new BetaConfigInitializer());
@@ -23,7 +27,4 @@ public class DecommissionToolApp {
         Dump.main(args);
     }
 
-    public String fakeMethod() {
-        return "fake method to bypass sonar's validation of utility classes.";
-    }
 }

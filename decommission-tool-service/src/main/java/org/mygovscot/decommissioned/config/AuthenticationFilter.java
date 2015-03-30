@@ -5,8 +5,10 @@ package org.mygovscot.decommissioned.config;
  * Copyright (C) 2014 Scottish Government Online Services & Strategy
  * OSS PROPRIETARY/CONFIDENTIAL
  */
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,10 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.StringUtils;
 
 
 @Component
@@ -47,7 +46,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private boolean authenticationEnabled;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private RestOperations rest;
 
     private static final String TOKEN_HEADER = "Authorization";
 
@@ -106,7 +105,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return null;
         }
 
-        ResponseEntity<Session> result = restTemplate.getForEntity(getSessionEndpoint(), Session.class, sessionId);
+        ResponseEntity<Session> result = rest.getForEntity(getSessionEndpoint(), Session.class, sessionId);
         if (result.getStatusCode() == HttpStatus.OK && result.getBody().isAlive()
                 && result.getBody().getUser().isActive()) {
             return result.getBody();
@@ -118,11 +117,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private void keepAlive(String sessionId) {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<String>(headers);
-        restTemplate.exchange(getSessionEndpoint(), HttpMethod.PATCH, entity, byte[].class, sessionId);
+        rest.exchange(getSessionEndpoint(), HttpMethod.PATCH, entity, byte[].class, sessionId);
     }
 
     public void setRestTemplate(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+        this.rest = restTemplate;
     }
 
     public void setAuthenticationEnabled(boolean authenticationEnabled) {

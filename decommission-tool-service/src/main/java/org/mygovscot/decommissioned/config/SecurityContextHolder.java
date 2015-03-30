@@ -8,7 +8,7 @@ package org.mygovscot.decommissioned.config;
  * will be obtained from auth and will be available in security context through the request.
  *
  */
-public class SecurityContextHolder {
+public final class SecurityContextHolder {
 
     private static final ThreadLocal<String> CONTEXT = new ThreadLocal<String>();
 
@@ -19,4 +19,9 @@ public class SecurityContextHolder {
     public static String getUser() {
         return CONTEXT.get();
     }
+
+    private SecurityContextHolder() {
+        // Utility class - should not be instantiated.
+    }
+
 }

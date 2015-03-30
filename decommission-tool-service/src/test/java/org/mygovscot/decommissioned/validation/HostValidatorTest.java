@@ -1,6 +1,5 @@
 package org.mygovscot.decommissioned.validation;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

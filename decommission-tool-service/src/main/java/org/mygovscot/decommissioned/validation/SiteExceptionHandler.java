@@ -74,10 +74,14 @@ public class SiteExceptionHandler extends ResponseEntityExceptionHandler {
         return violations;
     }
 
-    private class SiteViolation {
+    private static class SiteViolation {
+
         private Site site;
+
         private String violation;
+
         private String path;
+
         private Page page;
 
         public Site getSite() {
@@ -111,5 +115,7 @@ public class SiteExceptionHandler extends ResponseEntityExceptionHandler {
         public Page getPage() {
             return page;
         }
+
     }
+
 }

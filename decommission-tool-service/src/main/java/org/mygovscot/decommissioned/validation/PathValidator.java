@@ -15,6 +15,7 @@ public class PathValidator implements ConstraintValidator<Path, String> {
 
     @Override
     public void initialize(Path path) {
+        // No initialisation required.
     }
 
     @Override
