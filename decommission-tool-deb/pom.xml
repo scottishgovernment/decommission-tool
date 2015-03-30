@@ -12,14 +12,14 @@
     <artifactId>decommission-tool-deb</artifactId>
     <packaging>deb</packaging>
 
-    <name>MyGov Decommission Tool Debian Package</name>
+    <name>Decommissioning Tool Debian Package</name>
     <description>Debian package for MyGov Decommission Tool REST API.</description>
 
     <dependencies>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>decommission-tool-rest-api</artifactId>
+            <artifactId>decommission-tool-service</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -84,7 +84,7 @@
                             </mapper>
                         </data>
                         <data>
-                            <src>${project.build.directory}/dependency/decommission-tool-rest-api-${project.version}.jar</src>
+                            <src>${project.build.directory}/dependency/decommission-tool-service-${project.version}.jar</src>
                             <dst>decommission-tool.jar</dst>
                             <type>file</type>
                             <mapper>
