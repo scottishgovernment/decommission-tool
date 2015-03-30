@@ -76,7 +76,7 @@
                     <controlDir>${basedir}/src/deb/control</controlDir>
                     <dataSet>
                         <data>
-                            <src>${basedir}/src/deb/init/decommission-tool.conf</src>
+                            <src>${basedir}/src/deb/init/decommission.conf</src>
                             <type>file</type>
                             <mapper>
                                 <type>perm</type>

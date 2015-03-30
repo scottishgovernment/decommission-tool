@@ -1,2 +1,2 @@
 #!/bin/sh
-service decommission-tool stop || true
+service decommission stop || true
