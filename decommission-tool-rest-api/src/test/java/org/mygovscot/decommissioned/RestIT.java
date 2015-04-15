@@ -65,16 +65,16 @@ public class RestIT {
         assertEquals(0, siteRepository.findAll().size());
 
         // Check that no documents are returned via rest api
-        get("/sites").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
+        get("/redirects/sites").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
 
         // Post site object as json to create a new document
-        given().contentType(ContentType.JSON).body(site).post("/sites").then().statusCode(SC_CREATED);
+        given().contentType(ContentType.JSON).body(site).post("/redirects/sites").then().statusCode(SC_CREATED);
 
         // Check that there is one and only one document in the database
         assertEquals(1, siteRepository.findAll().size());
 
         // Check that the list of documents returned through the rest api is the newly created entry.
-        get("/sites").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(1));
+        get("/redirects/sites").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(1));
     }
 
     @Test
@@ -83,11 +83,11 @@ public class RestIT {
         site.setName("name1");
 
         // Can't save site because it does not have a host
-        given().contentType(ContentType.JSON).body(site).post("/sites").then().statusCode(SC_BAD_REQUEST);
+        given().contentType(ContentType.JSON).body(site).post("/redirects/sites").then().statusCode(SC_BAD_REQUEST);
 
         // Save one site
         site.setHost("www.host1.com");
-        given().contentType(ContentType.JSON).body(site).post("/sites").then().statusCode(SC_CREATED);
+        given().contentType(ContentType.JSON).body(site).post("/redirects/sites").then().statusCode(SC_CREATED);
 
         // Check that there is one and only one document in the database
         assertEquals(1, siteRepository.findAll().size());
@@ -105,7 +105,7 @@ public class RestIT {
         site.setName("name1");
         site.setHost("#www.host1.com///");
 
-        given().contentType(ContentType.JSON).body(site).post("/sites").then().statusCode(SC_BAD_REQUEST);
+        given().contentType(ContentType.JSON).body(site).post("/redirects/sites").then().statusCode(SC_BAD_REQUEST);
 
         assertEquals(0, siteRepository.findAll().size());
     }
@@ -127,18 +127,18 @@ public class RestIT {
         assertEquals(0, pageRepository.findAll().size());
 
         // Check that no documents are returned via rest api
-        get("/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
+        get("/redirects/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
 
         // Post page object as json to create a new document
-        given().contentType(ContentType.JSON).body(toHAL(page)).post("/pages").then().statusCode(SC_CREATED);
+        given().contentType(ContentType.JSON).body(toHAL(page)).post("/redirects/pages").then().statusCode(SC_CREATED);
 
         // Check that there is one and only one document in the database
         assertEquals(1, pageRepository.findAll().size());
 
         // Check that the list of documents returned through the rest api is the newly created entry.
-        get("/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(1));
+        get("/redirects/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(1));
 
-        String siteUrl = get("/sites/" + site.getId()).then().extract().path("_links.self.href");
+        String siteUrl = get("/redirects/sites/" + site.getId()).then().extract().path("_links.self.href");
         get(siteUrl + "/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("_embedded.pages[0].srcUrl", equalTo(page.getSrcUrl()));
 
     }
@@ -160,21 +160,21 @@ public class RestIT {
         assertEquals(0, pageRepository.findAll().size());
 
         // Check that no documents are returned via rest api
-        get("/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
+        get("/redirects/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
 
         // Post page object as json to create a new document
-        given().contentType(ContentType.JSON).body(toHAL(page)).post("/pages").then().statusCode(SC_BAD_REQUEST);
+        given().contentType(ContentType.JSON).body(toHAL(page)).post("/redirects/pages").then().statusCode(SC_BAD_REQUEST);
 
         // Check that the document was not saved to db
         assertEquals(0, pageRepository.findAll().size());
 
         // Check that the list of documents returned through the rest api is still empty.
-        get("/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
+        get("/redirects/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
 
     }
 
     private String getSiteUrl(Site site) {
-        return get("/sites/" + site.getId()).then().extract().path("_links.self.href");
+        return get("/redirects/sites/" + site.getId()).then().extract().path("_links.self.href");
     }
 
     private PathRepresentation toHAL(Page page) {

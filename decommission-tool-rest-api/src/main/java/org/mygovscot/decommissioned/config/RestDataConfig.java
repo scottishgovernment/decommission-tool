@@ -16,5 +16,6 @@ public class RestDataConfig extends RepositoryRestMvcConfiguration {
         super.configureRepositoryRestConfiguration(config);
         config.exposeIdsFor(Site.class);
         config.exposeIdsFor(Page.class);
+        config.setBaseUri("redirects");
     }
 }
