@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.mygovscot</groupId>
+        <groupId>org.mygovscot.decommission-tool</groupId>
         <artifactId>decommission-tool</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
@@ -12,14 +12,14 @@
     <artifactId>decommission-tool-deb</artifactId>
     <packaging>deb</packaging>
 
-    <name>MyGov Decommission Tool Debian Package</name>
+    <name>Decommissioning Tool Debian Package</name>
     <description>Debian package for MyGov Decommission Tool REST API.</description>
 
     <dependencies>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>decommission-tool-rest-api</artifactId>
+            <artifactId>decommission-tool-service</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -76,7 +76,7 @@
                     <controlDir>${basedir}/src/deb/control</controlDir>
                     <dataSet>
                         <data>
-                            <src>${basedir}/src/deb/init/decommission-tool.conf</src>
+                            <src>${basedir}/src/deb/init/decommission.conf</src>
                             <type>file</type>
                             <mapper>
                                 <type>perm</type>
@@ -84,7 +84,7 @@
                             </mapper>
                         </data>
                         <data>
-                            <src>${project.build.directory}/dependency/decommission-tool-rest-api-${project.version}.jar</src>
+                            <src>${project.build.directory}/dependency/decommission-tool-service-${project.version}.jar</src>
                             <dst>decommission-tool.jar</dst>
                             <type>file</type>
                             <mapper>

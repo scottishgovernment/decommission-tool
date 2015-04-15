@@ -1,8 +1,8 @@
-Package: decommission-tool-rest-api
+Package: decommission-tool
 Version: [[version]]
 Section: mygov
 Priority: optional
 Architecture: all
 Description: [[description]]
 Maintainer: tim.squires@scotland.gsi.gov.uk
-Depends: java7-runtime-headless
+Depends: java8-runtime-headless

@@ -10,7 +10,7 @@
         <version>2</version>
     </parent>
 
-    <groupId>org.mygovscot</groupId>
+    <groupId>org.mygovscot.decommission-tool</groupId>
     <artifactId>decommission-tool</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -18,7 +18,7 @@
     <name>Decommissioning Tool</name>
 
     <modules>
-        <module>decommission-tool-rest-api</module>
+        <module>decommission-tool-service</module>
         <module>decommission-tool-deb</module>
     </modules>
 
