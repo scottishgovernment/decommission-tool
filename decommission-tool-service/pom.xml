@@ -30,6 +30,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mygovscot.utils</groupId>
+            <artifactId>mygovscot_util_servlet</artifactId>
+            <version>${mygovscot.utils.version}</version>
+        </dependency>        
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
