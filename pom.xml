@@ -16,10 +16,6 @@
     <packaging>pom</packaging>
 
     <name>Decommissioning Tool</name>
-    
-    <properties>
-        <mygovscot.utils.version>1.0.5-SNAPSHOT</mygovscot.utils.version>
-    </properties>    
 
     <modules>
         <module>decommission-tool-service</module>

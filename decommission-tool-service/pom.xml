@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.mygovscot.utils</groupId>
             <artifactId>mygovscot_util_servlet</artifactId>
-            <version>${mygovscot.utils.version}</version>
+            <version>1.0.5-SNAPSHOT</version>
         </dependency>        
 
         <dependency>
