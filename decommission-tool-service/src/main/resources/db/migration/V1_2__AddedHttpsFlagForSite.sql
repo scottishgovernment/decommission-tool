@@ -1,0 +1,1 @@
+ALTER TABLE site ADD https_supported boolean default true;

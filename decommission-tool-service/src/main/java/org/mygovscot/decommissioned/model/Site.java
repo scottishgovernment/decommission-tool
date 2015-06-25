@@ -27,11 +27,7 @@ public class Site {
 
     private String description;
 
-    private String siteMatchMsg;
-
-    private String categoryMatchMsg;
-
-    private String pageMatchMsg;
+    private boolean httpsSupported;
 
     @OneToMany(mappedBy = "site", cascade = CascadeType.ALL)
     private List<Page> pages;
@@ -68,28 +64,12 @@ public class Site {
         this.description = description;
     }
 
-    public String getSiteMatchMsg() {
-        return siteMatchMsg;
+    public boolean isHttpsSupported() {
+        return httpsSupported;
     }
 
-    public void setSiteMatchMsg(String siteMatchMsg) {
-        this.siteMatchMsg = siteMatchMsg;
-    }
-
-    public String getCategoryMatchMsg() {
-        return categoryMatchMsg;
-    }
-
-    public void setCategoryMatchMsg(String categoryMatchMsg) {
-        this.categoryMatchMsg = categoryMatchMsg;
-    }
-
-    public String getPageMatchMsg() {
-        return pageMatchMsg;
-    }
-
-    public void setPageMatchMsg(String pageMatchMsg) {
-        this.pageMatchMsg = pageMatchMsg;
+    public void setHttpsSupported(boolean httpsSupported) {
+        this.httpsSupported = httpsSupported;
     }
 
     public List<Page> getPages() {
