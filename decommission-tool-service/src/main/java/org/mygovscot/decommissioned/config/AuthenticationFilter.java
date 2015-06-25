@@ -117,7 +117,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private void keepAlive(String sessionId) {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<String>(headers);
-        rest.exchange(getSessionEndpoint(), HttpMethod.PATCH, entity, byte[].class, sessionId);
+        rest.exchange(getSessionEndpoint(), HttpMethod.PUT, entity, byte[].class, sessionId);
     }
 
     public void setRestTemplate(RestTemplate restTemplate) {
