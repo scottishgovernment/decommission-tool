@@ -1,5 +1,7 @@
 package org.mygovscot.decommissioned.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.mygovscot.decommissioned.validation.Host;
 
@@ -80,5 +82,38 @@ public class Site {
         this.pages = pages;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Site)) {
+            return false;
+        }
+
+        Site site = (Site) o;
+
+        return new EqualsBuilder()
+                .append(httpsSupported, site.httpsSupported)
+                .append(id, site.id)
+                .append(host, site.host)
+                .append(name, site.name)
+                .append(description, site.description)
+                .append(pages, site.pages)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(host)
+                .append(name)
+                .append(description)
+                .append(httpsSupported)
+                .append(pages)
+                .toHashCode();
+    }
 }
 

@@ -1,0 +1,1 @@
+ALTER TABLE page DROP COLUMN match_level;

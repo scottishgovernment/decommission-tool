@@ -61,11 +61,11 @@ public class SiteExceptionHandler extends ResponseEntityExceptionHandler {
             SiteViolation siteViolation = new SiteViolation();
             if (violation.getRootBean() instanceof Page) {
                 Page page = (Page) violation.getRootBean();
-                siteViolation.setSite(page.getSite());
-                siteViolation.setPage(page);
+                siteViolation.setSite(page.getSite().getId());
+                siteViolation.setPage(page.getId());
             } else {
                 Site site = (Site) violation.getRootBean();
-                siteViolation.setSite(site);
+                siteViolation.setSite(site.getId());
             }
             siteViolation.setViolation(violation.getMessage());
             siteViolation.setPath(violation.getPropertyPath() + "");
@@ -76,19 +76,19 @@ public class SiteExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static class SiteViolation {
 
-        private Site site;
+        private String site;
 
         private String violation;
 
         private String path;
 
-        private Page page;
+        private String page;
 
-        public Site getSite() {
+        public String getSite() {
             return site;
         }
 
-        public void setSite(Site site) {
+        public void setSite(String site) {
             this.site = site;
         }
 
@@ -108,11 +108,11 @@ public class SiteExceptionHandler extends ResponseEntityExceptionHandler {
             this.path = path;
         }
 
-        public void setPage(Page page) {
+        public void setPage(String page) {
             this.page = page;
         }
 
-        public Page getPage() {
+        public String getPage() {
             return page;
         }
 

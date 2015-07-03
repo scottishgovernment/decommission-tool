@@ -1,5 +1,7 @@
 package org.mygovscot.decommissioned.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.mygovscot.decommissioned.validation.Path;
 
@@ -29,9 +31,6 @@ public class Page {
     @Path(message = "Target url must be a valid path")
     private String targetUrl;
 
-    private String matchLevel;
-
-
     public String getId() {
         return id;
     }
@@ -56,19 +55,52 @@ public class Page {
         this.targetUrl = targetUrl;
     }
 
-    public String getMatchLevel() {
-        return matchLevel;
-    }
-
-    public void setMatchLevel(String matchLevel) {
-        this.matchLevel = matchLevel;
-    }
-
     public Site getSite() {
         return site;
     }
 
     public void setSite(Site site) {
         this.site = site;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Page)) {
+            return false;
+        }
+
+        Page page = (Page) o;
+
+        return new EqualsBuilder()
+                .append(id, page.id)
+                .append(site, page.site)
+                .append(srcUrl, page.srcUrl)
+                .append(targetUrl, page.targetUrl)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(site)
+                .append(srcUrl)
+                .append(targetUrl)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Page{" +
+                "id='" + id + '\'' +
+                ", site=" + site +
+                ", srcUrl='" + srcUrl + '\'' +
+                ", targetUrl='" + targetUrl + '\'' +
+                '}';
     }
 }

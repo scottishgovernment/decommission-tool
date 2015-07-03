@@ -3,8 +3,8 @@ application:
 
 logging:
   level:
-    org.springframework.web: DEBUG
-    org.mygovscot: DEBUG
+    org.springframework.web: INFO
+    org.mygovscot: INFO
 
 server:
     port: 8089
