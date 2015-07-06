@@ -1,5 +1,6 @@
 package org.mygovscot.decommissioned.importer;
 
+import jdk.jfr.events.ThrowablesEvent;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +33,7 @@ public class ImportService {
     @Autowired
     private SiteRepository siteRepository;
 
+    @Transactional
     public ImportResult importRedirects(String siteId, String csvSource) {
         InputStream is = new ByteArrayInputStream(csvSource.getBytes(StandardCharsets.UTF_8));
         Site site = siteRepository.findOne(siteId);
@@ -67,6 +70,11 @@ public class ImportService {
 
         String srcUrl = record.get(0).trim();
         String targetUrl = record.get(1).trim();
+
+        // if the target url is empty then default to the home page
+        if (targetUrl.isEmpty()) {
+            targetUrl = "/";
+        }
         srcUrl = cleanSourceUrl(site, srcUrl);
 
         // check if there are any pages with this srcUrl

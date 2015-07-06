@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
-@RequestMapping("/import")
+@RequestMapping("/redirects/import")
 public class ImportResource {
 
     @Autowired

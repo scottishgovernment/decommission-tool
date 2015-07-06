@@ -53,6 +53,24 @@ public class ImportServiceTest {
     }
 
     @Test
+    public void emptyTargetDefaultsToHomePage() {
+
+        // ARRANGE
+        String csv = "/one,\n" +
+                "/two, /two-redirect";
+
+        // ACT
+        sut.importRedirects("emptyTarget", csv);
+
+        // ASSERT
+        Site site = siteRepository.findOne("emptyTarget");
+        Page page1 = page(site, "/one", "/");
+        Page page2 = page(site, "/two", "/two-redirect");
+        Mockito.verify(pageRepository).save(Mockito.eq(page1));
+        Mockito.verify(pageRepository).save(Mockito.eq(page2));
+    }
+
+    @Test
     public void greenPathWithFullyQualifiedUrl() {
 
         // ARRANGE
@@ -126,6 +144,7 @@ public class ImportServiceTest {
         List<Site> sites = new ArrayList<>();
         Collections.addAll(sites,
                 site("invalidURI", "www.invalidurl.com"),
+                site("emptyTarget", "www.emptyTarget.com"),
                 site("greenPath", "www.greenpath.com"),
                 site("greenPathWithHost", "www.greenpath.com"),
                 site("wrongHost", "www.wronghost.com"),
