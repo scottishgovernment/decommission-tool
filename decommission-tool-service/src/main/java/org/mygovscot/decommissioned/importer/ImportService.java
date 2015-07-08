@@ -1,6 +1,5 @@
 package org.mygovscot.decommissioned.importer;
 
-import jdk.jfr.events.ThrowablesEvent;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;

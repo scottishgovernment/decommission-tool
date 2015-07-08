@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mygovscot.beta.config.BetaConfigInitializer;
+import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
 import org.mygovscot.decommissioned.repository.PageRepository;
@@ -20,8 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@ContextConfiguration(classes=ImportServiceTest.class)
-@Configuration
+@ContextConfiguration(classes=ImportServiceTestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ImportServiceTest {
 
@@ -56,7 +56,8 @@ public class ImportServiceTest {
     public void emptyTargetDefaultsToHomePage() {
 
         // ARRANGE
-        String csv = "/one,\n" +
+        String csv =
+                "/one,\n" +
                 "/two, /two-redirect";
 
         // ACT
@@ -139,52 +140,5 @@ public class ImportServiceTest {
         Mockito.verify(pageRepository, Mockito.never()).save(Mockito.eq(page(null, "/two", "/two-redirect")));
     }
 
-    @Bean
-    public SiteRepository getSiteRepository() {
-        List<Site> sites = new ArrayList<>();
-        Collections.addAll(sites,
-                site("invalidURI", "www.invalidurl.com"),
-                site("emptyTarget", "www.emptyTarget.com"),
-                site("greenPath", "www.greenpath.com"),
-                site("greenPathWithHost", "www.greenpath.com"),
-                site("wrongHost", "www.wronghost.com"),
-                site("prePopulated", "www.prepop.com"));
 
-        SiteRepository siteRepository = Mockito.mock(SiteRepository.class);
-        for (Site s : sites) {
-            Mockito.when(siteRepository.findOne(s.getId())).thenReturn(s);
-        }
-        return siteRepository;
-    }
-
-    @Bean
-    public PageRepository getPageRepository() {
-        PageRepository pageRepository = Mockito.mock(PageRepository.class);
-        Mockito.when(pageRepository.findOneBySiteIdAndSrcUrl("prePopulated", "/one")).thenReturn(page(null, "/one", "/one-redirect"));
-        Mockito.when(pageRepository.findOneBySiteIdAndSrcUrl("prePopulated", "/two")).thenReturn(page(null, "/two", "/two-redirect"));
-        return pageRepository;
-    }
-
-    @Bean
-    public ImportService getImportService() {
-        return new ImportService();
-    }
-
-
-    private Page page(Site site, String srcUrl, String targetUrl) {
-        Page p = new Page();
-        p.setSite(site);
-        p.setSrcUrl(srcUrl);
-        p.setTargetUrl(targetUrl);
-        return p;
-    }
-
-    private Site site(String id, String host) {
-        Site s = new Site();
-        s.setHost(host);
-        s.setName(id + " name");
-        s.setHttpsSupported(false);
-        s.setId(id);
-        return s;
-    }
 }

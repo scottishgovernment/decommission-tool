@@ -4,7 +4,7 @@ application:
 logging:
   level:
     org.springframework.web: INFO
-    org.mygovscot: INFO
+    org.mygovscot: DEBUG
 
 server:
     port: 8089
@@ -24,3 +24,5 @@ spring:
 authentication:
     enabled: false
     endpoint: http://localhost:8086/security/
+suggester:
+    searchUrl: http://localhost:8082/direct/?size=5&q=

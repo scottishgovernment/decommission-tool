@@ -5,11 +5,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.mygovscot.decommissioned.validation.Path;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 public class Page {
@@ -22,6 +25,9 @@ public class Page {
     @ManyToOne
     @NotNull
     private Site site;
+
+    @OneToMany(mappedBy = "page", cascade = CascadeType.ALL)
+    private List<PageSuggestion> pageSuggestions;
 
     @NotNull(message = "Page source must be specified")
     @Path(message = "Source url must be a valid path")
@@ -63,6 +69,13 @@ public class Page {
         this.site = site;
     }
 
+    public List<PageSuggestion> getPageSuggestions() {
+        return pageSuggestions;
+    }
+
+    public void setPageSuggestions(List<PageSuggestion> pageSuggestions) {
+        this.pageSuggestions = pageSuggestions;
+    }
 
     @Override
     public boolean equals(Object o) {
