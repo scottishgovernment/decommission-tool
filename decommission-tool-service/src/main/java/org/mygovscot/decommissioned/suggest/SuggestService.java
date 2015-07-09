@@ -45,17 +45,14 @@ public class SuggestService {
         if (site == null) {
             throw new IllegalArgumentException("No such site:"+siteId);
         }
-
+        LOG.debug("updateSuggestions {} {}", siteId, site.getHost());
         int replacementCount = 0;
         for (Page page : site.getPages()) {
             int rank = 0;
-            LOG.info("generateSuggestions for page "+page.getSrcUrl());
 
-            // get the search phrase
             String searchPhrase = searchPhraseExtractor.extract(page);
-            LOG.info("\tsearchPhrase="+searchPhrase);
-
             List<String> suggestedPages = suggester.suggestions(searchPhrase);
+            LOG.debug("\tpage={} searchPhrase={} suggested pages={}", page.getSrcUrl(), searchPhrase, suggestedPages);
 
             // clear the existing suggestions for this page
             List<PageSuggestion> suggestionsForPage = pageSuggestionRepository.findByPageId(page.getId());
@@ -71,6 +68,7 @@ public class SuggestService {
 
                 // if this page currently has / as its target and this is the first result then update ...
                 if ("/".equals(page.getTargetUrl())) {
+                    LOG.debug("\tsetting target url to {}", suggestedPage);
                     replacementCount++;
                     page.setTargetUrl(suggestedPage);
                     pageRepository.save(page);
