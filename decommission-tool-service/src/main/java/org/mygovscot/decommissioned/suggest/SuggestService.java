@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 
 import java.util.List;
@@ -37,18 +36,21 @@ public class SuggestService {
     @Autowired
     private Suggester suggester;
 
-    @Transactional
-    public SuggestResults updateSuggestions(String siteId) throws IOException {
+    //@Transactional
+    public SuggestResults updateSuggestions(String siteId, SuggesterListener listener) throws IOException {
 
         Site site = siteRepository.findOne(siteId);
-
         if (site == null) {
             throw new IllegalArgumentException("No such site:"+siteId);
         }
+
         LOG.debug("updateSuggestions {} {}", siteId, site.getHost());
         int replacementCount = 0;
+
         for (Page page : site.getPages()) {
             int rank = 0;
+
+            listener.processingPage(page);
 
             String searchPhrase = searchPhraseExtractor.extract(page);
             List<String> suggestedPages = suggester.suggestions(searchPhrase);
@@ -75,7 +77,11 @@ public class SuggestService {
                 }
             }
         }
+        LOG.debug("done");
+        listener.end();
+
         return new SuggestResults(replacementCount);
     }
+
 
 }

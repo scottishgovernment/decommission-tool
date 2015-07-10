@@ -3,6 +3,7 @@ package org.mygovscot.decommissioned.suggest;
 import org.mockito.Mockito;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
+import org.mygovscot.decommissioned.repository.JobRepository;
 import org.mygovscot.decommissioned.repository.PageRepository;
 import org.mygovscot.decommissioned.repository.PageSuggestionRepository;
 import org.mygovscot.decommissioned.repository.SiteRepository;
@@ -20,6 +21,11 @@ public class SuggestServiceTestConfig {
     public PageRepository getPageRepository() {
         PageRepository pageRepository = Mockito.mock(PageRepository.class);
         return pageRepository;
+    }
+
+    @Bean
+    public JobRepository getJobRepository() {
+        return Mockito.mock(JobRepository.class);
     }
 
     @Bean

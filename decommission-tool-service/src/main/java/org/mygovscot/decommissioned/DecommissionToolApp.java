@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.servlet.Filter;
 
@@ -36,6 +37,16 @@ public class DecommissionToolApp {
         } catch (Throwable t) {
             TOP_LEVEL_ERROR_HANDLER.handleThrowable(t);
         }
+    }
+
+    @Bean
+    ThreadPoolTaskExecutor getTaskExecutor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setMaxPoolSize(10);
+        taskExecutor.setQueueCapacity(20);
+        taskExecutor.setCorePoolSize(5);
+        taskExecutor.initialize();
+        return taskExecutor;
     }
 
     @Bean

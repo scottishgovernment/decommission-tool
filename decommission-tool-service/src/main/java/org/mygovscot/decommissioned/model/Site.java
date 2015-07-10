@@ -7,6 +7,7 @@ import org.mygovscot.decommissioned.validation.Host;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -31,7 +32,7 @@ public class Site {
 
     private boolean httpsSupported;
 
-    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Page> pages;
 
     public String getId() {

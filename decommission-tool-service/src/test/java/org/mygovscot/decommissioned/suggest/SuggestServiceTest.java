@@ -3,6 +3,7 @@ package org.mygovscot.decommissioned.suggest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mygovscot.decommissioned.repository.PageRepository;
 import org.mygovscot.decommissioned.repository.PageSuggestionRepository;
 import org.mygovscot.decommissioned.repository.SiteRepository;
@@ -38,13 +39,15 @@ public class SuggestServiceTest {
     @Autowired
     Suggester suggester;
 
+    SuggesterListener listener = Mockito.mock(SuggesterListener.class);
+
     @Test(expected=IllegalArgumentException.class)
     public void noSuchSite() throws IOException {
 
         // ARRANGE
 
         // ACT
-        SuggestResults results = sut.updateSuggestions("noSuchSite");
+        SuggestResults results = sut.updateSuggestions("noSuchSite", listener);
 
         // ASSERT - see expected exception
     }
@@ -56,7 +59,7 @@ public class SuggestServiceTest {
         // ARRANGE
 
         // ACT
-        SuggestResults results = sut.updateSuggestions("greenPath");
+        SuggestResults results = sut.updateSuggestions("greenPath", listener);
 
         // ASSERT
         Assert.assertTrue(results.getSuggestionsCount() == 2);
@@ -68,7 +71,7 @@ public class SuggestServiceTest {
         // ARRANGE
 
         // ACT
-        SuggestResults results = sut.updateSuggestions("upchuckingExtractor");
+        SuggestResults results = sut.updateSuggestions("upchuckingExtractor", listener);
 
         // ASSERT -- see expected exception
     }
@@ -79,7 +82,7 @@ public class SuggestServiceTest {
         // ARRANGE
 
         // ACT
-        SuggestResults results = sut.updateSuggestions("upchuckingSuggester");
+        SuggestResults results = sut.updateSuggestions("upchuckingSuggester", listener);
 
         // ASSERT -- see expected exception
     }
