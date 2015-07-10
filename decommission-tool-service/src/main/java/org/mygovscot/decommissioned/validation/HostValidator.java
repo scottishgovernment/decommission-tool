@@ -19,13 +19,20 @@ public class HostValidator implements ConstraintValidator<Host, String> {
 
     @Override
     public boolean isValid(String host, ConstraintValidatorContext context) {
+
+        // should not be empty or null
         if (StringUtils.isEmpty(host)) {
             return false;
-        } else {
-            return Arrays.stream(host.trim()
-                    .split(" "))
-                    .allMatch(h -> h.matches(IP_ADDRESS_REGEX) || h.matches(HOST_REGEX));
         }
+
+        // space spearated list f valid hostnames
+        if (!Arrays.stream(host.trim()
+                .split(" "))
+                .allMatch(h -> h.matches(IP_ADDRESS_REGEX) || h.matches(HOST_REGEX))) {
+            return false;
+        }
+
+        return true;
     }
 
 }

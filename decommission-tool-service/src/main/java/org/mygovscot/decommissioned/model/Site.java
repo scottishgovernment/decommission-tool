@@ -23,9 +23,10 @@ public class Site {
     private String id;
 
     @NotNull(message = "Please specify a host")
-    @Host(message = "Host must be a valid hostname or IP address")
+    @Host(message = "Host must be a unique host or ip address")
     private String host;
 
+    @NotNull(message = "Please specify a name")
     private String name;
 
     private String description;
