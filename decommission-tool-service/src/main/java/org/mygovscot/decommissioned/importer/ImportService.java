@@ -47,6 +47,9 @@ public class ImportService {
 
             CSVParser parser = new CSVParser(new InputStreamReader(is, StandardCharsets.UTF_8), CSVFormat.newFormat(','));
             for (CSVRecord record : parser.getRecords()) {
+
+
+
                 if (processRecord(site, record)) {
                     added++;
                 } else {
@@ -79,16 +82,18 @@ public class ImportService {
         // check if there are any pages with this srcUrl
         Page page = pageRepository.findOneBySiteIdAndSrcUrl(site.getId(), srcUrl);
 
-        if (page != null) {
-            LOG.info("Src url already mapped: {} (mapped to {})", page.getSrcUrl(), page.getTargetUrl());
+        if (page != null && page.isLocked()) {
+            LOG.info("Src url already mapped and locked: {} (mapped to {})", page.getSrcUrl(), page.getTargetUrl());
             return false;
         }
 
-        page = new Page();
+        if (page == null) {
+            page = new Page();
+        }
         page.setSite(site);
         page.setSrcUrl(srcUrl);
         page.setTargetUrl(targetUrl);
-        LOG.info("Creating page: {} -> {}", page.getSrcUrl(), page.getTargetUrl());
+        LOG.info("page: {} -> {}", page.getSrcUrl(), page.getTargetUrl());
         pageRepository.save(page);
         return true;
 

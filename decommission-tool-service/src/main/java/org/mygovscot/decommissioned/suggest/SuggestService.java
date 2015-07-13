@@ -10,11 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class SuggestService {
@@ -36,7 +39,7 @@ public class SuggestService {
     @Autowired
     private Suggester suggester;
 
-    //@Transactional
+    @Async
     public SuggestResults updateSuggestions(String siteId, SuggesterListener listener) throws IOException {
 
         Site site = siteRepository.findOne(siteId);
@@ -48,17 +51,21 @@ public class SuggestService {
         int replacementCount = 0;
 
         for (Page page : site.getPages()) {
-            int rank = 0;
 
             listener.processingPage(page);
 
+            if (page.isLocked()) {
+                LOG.debug("\tpage={} is locked, skipping", page.getSrcUrl());
+                continue;
+            }
+
+            int rank = 0;
             String searchPhrase = searchPhraseExtractor.extract(page);
             List<String> suggestedPages = suggester.suggestions(searchPhrase);
             LOG.debug("\tpage={} searchPhrase={} suggested pages={}", page.getSrcUrl(), searchPhrase, suggestedPages);
 
             // clear the existing suggestions for this page
-            List<PageSuggestion> suggestionsForPage = pageSuggestionRepository.findByPageId(page.getId());
-            pageSuggestionRepository.delete(suggestionsForPage);
+            pageSuggestionRepository.delete(pageSuggestionRepository.findByPageId(page.getId()));
 
             // now save all of the new suggestions that we generated
             for (String suggestedPage : suggestedPages) {

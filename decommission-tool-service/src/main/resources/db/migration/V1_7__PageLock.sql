@@ -1,0 +1,1 @@
+ALTER TABLE page ADD locked boolean default false;

@@ -7,6 +7,7 @@ import org.mygovscot.decommissioned.validation.Path;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -36,6 +37,8 @@ public class Page {
     @NotNull(message = "Page target must be specified")
     @Path(message = "Target url must be a valid path")
     private String targetUrl;
+
+    private boolean locked;
 
     public String getId() {
         return id;
@@ -77,21 +80,27 @@ public class Page {
         this.pageSuggestions = pageSuggestions;
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
+        if (this == o) return true;
 
-        if (!(o instanceof Page)) {
-            return false;
-        }
+        if (!(o instanceof Page)) return false;
 
         Page page = (Page) o;
 
         return new EqualsBuilder()
+                .append(locked, page.locked)
                 .append(id, page.id)
                 .append(site, page.site)
+                .append(pageSuggestions, page.pageSuggestions)
                 .append(srcUrl, page.srcUrl)
                 .append(targetUrl, page.targetUrl)
                 .isEquals();
@@ -102,8 +111,10 @@ public class Page {
         return new HashCodeBuilder(17, 37)
                 .append(id)
                 .append(site)
+                .append(pageSuggestions)
                 .append(srcUrl)
                 .append(targetUrl)
+                .append(locked)
                 .toHashCode();
     }
 
@@ -112,8 +123,10 @@ public class Page {
         return "Page{" +
                 "id='" + id + '\'' +
                 ", site=" + site +
+                ", pageSuggestions=" + pageSuggestions +
                 ", srcUrl='" + srcUrl + '\'' +
                 ", targetUrl='" + targetUrl + '\'' +
+                ", locked=" + locked +
                 '}';
     }
 }

@@ -28,6 +28,7 @@ public class CorsFilter  extends OncePerRequestFilter {
     private static final String ACAM = "Access-Control-Allow-Methods";
     private static final String ACMA = "Access-Control-Max-Age";
     private static final String ACAH = "Access-Control-Allow-Headers";
+    private static final String ACEH = "Access-Control-Expose-Headers";
 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -36,6 +37,8 @@ public class CorsFilter  extends OncePerRequestFilter {
         response.setHeader(ACAM, "PUT, POST, GET, OPTIONS, DELETE");
         response.setHeader(ACMA, "3600");
         response.addHeader(ACAH, "x-requested-with");
+        response.addHeader(ACAH, "x-requested-with");
+        response.addHeader(ACEH, "Location");
         response.addHeader(ACAH, "Content-Type");
         response.addHeader(ACAH, "Authorization");
         response.addHeader(ACAH, "Bearer");

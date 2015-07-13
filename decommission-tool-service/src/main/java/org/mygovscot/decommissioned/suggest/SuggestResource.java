@@ -7,11 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
@@ -19,8 +21,6 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/redirects/suggest")
 public class SuggestResource {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SuggestResource.class);
 
     @Autowired
     private SuggestService suggestService;
@@ -33,25 +33,12 @@ public class SuggestResource {
 
     @RequestMapping(value= "{site}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Job updateSuggestions( @PathVariable("site") String site) throws IOException{
-        Job job = new Job();
-        JobUpdatingSuggesterListener suggesterListener = new JobUpdatingSuggesterListener(job);
-        job.setStatus("start");
-        jobRepository.save(job);
+    @Async
+    public void updateSuggestions( @RequestParam String job, @PathVariable("site") String site) throws IOException{
 
-        taskExecutor.submit(new Runnable() {
-            @Override
-            public void run(){
-                try {
-                    suggestService.updateSuggestions(site, suggesterListener);
-                } catch (IOException e) {
-                    job.setStatus("error:" + e.getMessage());
-                    jobRepository.save(job);
-                    LOG.error("Excpetion generating suggestions", e);
-                }
-            }
-        });
-        return job;
+        Job jobObj = jobRepository.findOne(job);
+        JobUpdatingSuggesterListener suggesterListener = new JobUpdatingSuggesterListener(jobObj);
+        suggestService.updateSuggestions(site, suggesterListener);
     }
 
     private class JobUpdatingSuggesterListener implements SuggesterListener {
@@ -64,18 +51,23 @@ public class SuggestResource {
         }
 
         public void start() {
-            // nothing requred
+            status("start");
         }
 
         public void processingPage(Page page) {
             pagesSeen++;
-            job.setStatus(pagesSeen+"/"+page.getSite().getPages().size());
-            jobRepository.save(job);
+            status(pagesSeen+"/"+page.getSite().getPages().size());
         }
 
         public void end() {
-            job.setStatus("done");
-            jobRepository.save(job);
+            status("done");
+        }
+
+        private void status(String status) {
+            if (job != null) {
+                job.setStatus(status);
+                jobRepository.save(job);
+            }
         }
     }
 }
