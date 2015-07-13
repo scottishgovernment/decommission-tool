@@ -90,9 +90,13 @@ public class Page {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
 
-        if (!(o instanceof Page)) return false;
+        if (!(o instanceof Page)) {
+            return false;
+        }
 
         Page page = (Page) o;
 
