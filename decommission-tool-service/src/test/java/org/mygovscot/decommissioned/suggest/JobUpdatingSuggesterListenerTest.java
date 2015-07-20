@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public class JobUpdatingSuggesterListenerTest {
 
     @Test
     public void ignoresNullJob() {
-        JobUpdatingSuggesterListener sut = new JobUpdatingSuggesterListener(null, jobRepository);
+        JobUpdatingSuggesterListener sut = new JobUpdatingSuggesterListener(new DeferredResult<>(), null, jobRepository);
         sut.start();
         sut.processingPage(anyPage());
         sut.end();
@@ -34,7 +35,7 @@ public class JobUpdatingSuggesterListenerTest {
     public void updatesJob() {
         Job job = new Job();
         job.setId("found");
-        JobUpdatingSuggesterListener sut = new JobUpdatingSuggesterListener(job, jobRepository);
+        JobUpdatingSuggesterListener sut = new JobUpdatingSuggesterListener(new DeferredResult<>(), job, jobRepository);
         sut.start();
         sut.processingPage(anyPage());
         sut.end();
