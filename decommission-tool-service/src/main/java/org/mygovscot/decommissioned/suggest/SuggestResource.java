@@ -33,5 +33,4 @@ public class SuggestResource {
         JobUpdatingSuggesterListener suggesterListener = new JobUpdatingSuggesterListener(jobObj, jobRepository);
         suggestService.updateSuggestions(site, suggesterListener);
     }
-
 }

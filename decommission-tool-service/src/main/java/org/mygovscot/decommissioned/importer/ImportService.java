@@ -3,6 +3,7 @@ package org.mygovscot.decommissioned.importer;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringUtils;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
 import org.mygovscot.decommissioned.repository.PageRepository;
@@ -47,9 +48,6 @@ public class ImportService {
 
             CSVParser parser = new CSVParser(new InputStreamReader(is, StandardCharsets.UTF_8), CSVFormat.newFormat(','));
             for (CSVRecord record : parser.getRecords()) {
-
-
-
                 if (processRecord(site, record)) {
                     added++;
                 } else {
@@ -64,18 +62,17 @@ public class ImportService {
 
     private boolean processRecord(Site site, CSVRecord record) {
 
-        if (record.size() != 2) {
+        if (record.size() < 1 || record.size() > 2) {
             throw new IllegalArgumentException(
-                    String.format("Invalid record (line %d) expected 2 fields, got %d",
+                    String.format("Invalid record (line %d) expected either 1 or 2 fields, got %d",
                             record.getRecordNumber(), record.size()));
         }
 
         String srcUrl = record.get(0).trim();
-        String targetUrl = record.get(1).trim();
-
-        // if the target url is empty then default to the home page
-        if (targetUrl.isEmpty()) {
-            targetUrl = "/";
+        // default the target url to "/" and only override it if it is not empty
+        String targetUrl = "/";
+        if (record.size() == 2 && !record.get(1).trim().isEmpty()) {
+            targetUrl = record.get(1).trim();
         }
         srcUrl = cleanSourceUrl(site, srcUrl);
 
@@ -102,17 +99,18 @@ public class ImportService {
     private String cleanSourceUrl(Site site, String srcUrl) {
         try {
             URI uri= new URI(srcUrl);
-            if (uri.getHost() != null) {
-                if (!uri.getHost().equals(site.getHost())) {
-                    throw new IllegalArgumentException(
-                            String.format("Host does not match site: >%s< != >%s<", uri.getHost(), site.getHost()));
-                }
-                return uri.getPath();
+            if (uri.getHost() != null && !uri.getHost().equals(site.getHost())) {
+                throw new IllegalArgumentException(
+                        String.format("Host does not match site: >%s< != >%s<", uri.getHost(), site.getHost()));
             }
+            StringBuilder cleanUri = new StringBuilder(uri.getPath());
+            if (!StringUtils.isEmpty(uri.getFragment())) {
+                cleanUri.append('#').append(uri.getFragment());
+            }
+            return cleanUri.toString();
+
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Invalid srcUrl", e);
         }
-
-        return srcUrl;
     }
 }

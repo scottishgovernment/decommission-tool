@@ -50,43 +50,49 @@ public class SuggestService {
 
         for (Page page : site.getPages()) {
 
-            listener.processingPage(page);
-
-            if (page.isLocked()) {
-                LOG.debug("\tpage={} is locked, skipping", page.getSrcUrl());
-                continue;
-            }
-
-            int rank = 0;
             String searchPhrase = searchPhraseExtractor.extract(page);
-            List<String> suggestedPages = suggester.suggestions(searchPhrase);
-            LOG.debug("\tpage={} searchPhrase={} suggested pages={}", page.getSrcUrl(), searchPhrase, suggestedPages);
-
-            // clear the existing suggestions for this page
-            pageSuggestionRepository.delete(pageSuggestionRepository.findByPageId(page.getId()));
-
-            // now save all of the new suggestions that we generated
-            for (String suggestedPage : suggestedPages) {
-                PageSuggestion suggestion = new PageSuggestion();
-                suggestion.setPage(page);
-                suggestion.setRank(rank++);
-                suggestion.setUrl(suggestedPage);
-                pageSuggestionRepository.save(suggestion);
-
-                // if this page currently has / as its target and this is the first result then update ...
-                if ("/".equals(page.getTargetUrl())) {
-                    LOG.debug("\tsetting target url to {}", suggestedPage);
-                    replacementCount++;
-                    page.setTargetUrl(suggestedPage);
-                    pageRepository.save(page);
-                }
-            }
+            replacementCount += updateSuggestionsForPage(page, searchPhrase, listener);
         }
         LOG.debug("done");
         listener.end();
 
         return new SuggestResults(replacementCount);
     }
+
+    private int updateSuggestionsForPage(Page page, String searchPhrase, SuggesterListener listener) throws IOException {
+        listener.processingPage(page);
+
+        if (page.isLocked()) {
+            LOG.debug("\tpage={} is locked, skipping", page.getSrcUrl());
+            return 0;
+        }
+
+        int rank = 0;
+        List<String> suggestedPages = suggester.suggestions(searchPhrase);
+        LOG.debug("\tpage={} searchPhrase={} suggested pages={}", page.getSrcUrl(), searchPhrase, suggestedPages);
+
+        // clear the existing suggestions for this page
+        pageSuggestionRepository.delete(pageSuggestionRepository.findByPageId(page.getId()));
+        int replacements = 0;
+        // now save all of the new suggestions that we generated
+        for (String suggestedPage : suggestedPages) {
+            PageSuggestion suggestion = new PageSuggestion();
+            suggestion.setPage(page);
+            suggestion.setRank(rank++);
+            suggestion.setUrl(suggestedPage);
+            pageSuggestionRepository.save(suggestion);
+
+            // if this page currently has / as its target and this is the first result then update ...
+            if ("/".equals(page.getTargetUrl())) {
+                LOG.debug("\tsetting target url to {}", suggestedPage);
+                page.setTargetUrl(suggestedPage);
+                pageRepository.save(page);
+                replacements++;
+            }
+        }
+        return replacements;
+    }
+
 
 
 }

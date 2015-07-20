@@ -38,16 +38,16 @@ public class ImportServiceTest {
     public void greenPath() {
 
         // ARRANGE
-        String csv = "/one, /one-redirect\n" +
-                "/two, /two-redirect";
+        String csv = "/onegp, /one-redirect\n" +
+                "/twogp, /two-redirect";
 
         // ACT
         sut.importRedirects("greenPath", csv);
 
         // ASSERT
         Site site = siteRepository.findOne("greenPath");
-        Page page1 = page(site, "/one", "/one-redirect");
-        Page page2 = page(site, "/two", "/two-redirect");
+        Page page1 = page(site, "/onegp", "/one-redirect");
+        Page page2 = page(site, "/twogp", "/two-redirect");
         Mockito.verify(pageRepository).save(Mockito.eq(page1));
         Mockito.verify(pageRepository).save(Mockito.eq(page2));
     }
@@ -57,8 +57,26 @@ public class ImportServiceTest {
 
         // ARRANGE
         String csv =
-                "/one,\n" +
-                "/two, /two-redirect";
+                "/oneemp,\n" +
+                "/twoemp, /two-redirect";
+
+        // ACT
+        sut.importRedirects("emptyTarget", csv);
+
+        // ASSERT
+        Site site = siteRepository.findOne("emptyTarget");
+        Page page1 = page(site, "/oneemp", "/");
+        Page page2 = page(site, "/twoemp", "/two-redirect");
+        Mockito.verify(pageRepository).save(Mockito.eq(page1));
+        Mockito.verify(pageRepository).save(Mockito.eq(page2));
+    }
+
+    @Test
+    public void noTargetColumnDefaultsToHomePage() {
+
+        // ARRANGE
+        String csv =
+                "/one\n" + "/two, /two-redirect";
 
         // ACT
         sut.importRedirects("emptyTarget", csv);
@@ -85,6 +103,24 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("greenPathWithHost");
         Page page1 = page(site, "/one", "/one-redirect");
         Page page2 = page(site, "/two", "/two-redirect");
+        Mockito.verify(pageRepository).save(Mockito.eq(page1));
+        Mockito.verify(pageRepository).save(Mockito.eq(page2));
+    }
+
+    @Test
+    public void greenPathWithFragments() {
+
+        // ARRANGE
+        String csv = "http://www.greenpath.com/one#fragone, /one-redirect\n" +
+                "http://www.greenpath.com/two?param1=one&params2=two#fragtwo, /two-redirect";
+
+        // ACT
+        sut.importRedirects("greenPathWithHost", csv);
+
+        // ASSERT
+        Site site = siteRepository.findOne("greenPathWithHost");
+        Page page1 = page(site, "/one#fragone", "/one-redirect");
+        Page page2 = page(site, "/two#fragtwo", "/two-redirect");
         Mockito.verify(pageRepository).save(Mockito.eq(page1));
         Mockito.verify(pageRepository).save(Mockito.eq(page2));
     }
