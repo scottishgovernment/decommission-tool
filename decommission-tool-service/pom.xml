@@ -18,7 +18,7 @@
         <spring-boot.version>1.2.2.RELEASE</spring-boot.version>
         <spring-data-jpa.version>1.6.2.RELEASE</spring-data-jpa.version>
         <spring-data-rest-webmvc.version>2.2.2.RELEASE</spring-data-rest-webmvc.version>
-        <spring.version>4.2.rc1</spring.version>
+        <spring.version>4.1.6.RELEASE</spring.version>
     </properties>
 
     <dependencies>
