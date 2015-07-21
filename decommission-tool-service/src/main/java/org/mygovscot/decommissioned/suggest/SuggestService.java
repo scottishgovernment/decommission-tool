@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class SuggestService {
     @Autowired
     private Suggester suggester;
 
-    @Async
+    @Transactional
     public SuggestResults updateSuggestions(String siteId, SuggesterListener listener) throws IOException {
 
         Site site = siteRepository.findOne(siteId);
@@ -49,7 +50,6 @@ public class SuggestService {
         int replacementCount = 0;
 
         for (Page page : site.getPages()) {
-
             String searchPhrase = searchPhraseExtractor.extract(page);
             replacementCount += updateSuggestionsForPage(page, searchPhrase, listener);
         }
@@ -73,6 +73,7 @@ public class SuggestService {
 
         // clear the existing suggestions for this page
         pageSuggestionRepository.delete(pageSuggestionRepository.findByPageId(page.getId()));
+
         int replacements = 0;
         // now save all of the new suggestions that we generated
         for (String suggestedPage : suggestedPages) {
