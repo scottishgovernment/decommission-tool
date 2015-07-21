@@ -40,7 +40,6 @@ public class SuggestResource {
 
         Job jobObj = jobRepository.findOne(job);
         JobUpdatingSuggesterListener suggesterListener = new JobUpdatingSuggesterListener(jobObj, jobRepository);
-//        suggestService.updateSuggestions(site, suggesterListener);
         taskExecutor.submit(new Runnable() {
             @Override
             public void run() {
