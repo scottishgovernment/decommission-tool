@@ -22,38 +22,37 @@ public class JobUpdatingSuggesterListenerTest {
     @Autowired
     private JobRepository jobRepository;
 
+    @Test
+    public void ignoresNullJob() {
+        JobUpdatingSuggesterListener sut = new JobUpdatingSuggesterListener(null, jobRepository);
+        sut.start();
+        sut.processingPage(anyPage());
+        sut.end();
+    }
 
-//    @Test
-//    public void ignoresNullJob() {
-//        JobUpdatingSuggesterListener sut = new JobUpdatingSuggesterListener(null, jobRepository);
-//        sut.start();
-//        sut.processingPage(anyPage());
-//        sut.end();
-//    }
-//
-//    @Test
-//    public void updatesJob() {
-//        Job job = new Job();
-//        job.setId("found");
-//        JobUpdatingSuggesterListener sut = new JobUpdatingSuggesterListener(job, jobRepository);
-//        sut.start();
-//        sut.processingPage(anyPage());
-//        sut.end();
-//    }
-//
-//    private Page anyPage() {
-//        Site site = new Site();
-//        Page page = new Page();
-//        site.setPages(new ArrayList<>());
-//        site.getPages().add(page);
-//        page.setSite(site);
-//        return page;
-//    }
-//
-//    @Bean
-//    private JobRepository getJobRepository() {
-//        JobRepository jr = Mockito.mock(JobRepository.class);
-//        Mockito.when(jr.findOne("found")).thenReturn(new Job());
-//        return jr;
-//    }
+    @Test
+    public void updatesJob() {
+        Job job = new Job();
+        job.setId("found");
+        JobUpdatingSuggesterListener sut = new JobUpdatingSuggesterListener(job, jobRepository);
+        sut.start();
+        sut.processingPage(anyPage());
+        sut.end();
+    }
+
+    private Page anyPage() {
+        Site site = new Site();
+        Page page = new Page();
+        site.setPages(new ArrayList<>());
+        site.getPages().add(page);
+        page.setSite(site);
+        return page;
+    }
+
+    @Bean
+    private JobRepository getJobRepository() {
+        JobRepository jr = Mockito.mock(JobRepository.class);
+        Mockito.when(jr.findOne("found")).thenReturn(new Job());
+        return jr;
+    }
 }
