@@ -3,10 +3,6 @@ package org.mygovscot.decommissioned.suggest;
 import org.mygovscot.decommissioned.model.Job;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.repository.JobRepository;
-import org.springframework.web.context.request.async.DeferredResult;
-
-import java.io.IOException;
-import java.io.Writer;
 
 class JobUpdatingSuggesterListener implements SuggesterListener {
 
