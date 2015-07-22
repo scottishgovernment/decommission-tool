@@ -24,7 +24,8 @@ public class ImportServiceTestConfig {
                 site("greenPath", "www.greenpath.com"),
                 site("greenPathWithHost", "www.greenpath.com"),
                 site("wrongHost", "www.wronghost.com"),
-                site("prePopulated", "www.prepop.com"));
+                site("prePopulated", "www.prepop.com"),
+                site("morethanonehost", "www.multi.com multi.com"));
 
         SiteRepository siteRepository = Mockito.mock(SiteRepository.class);
         for (Site s : sites) {

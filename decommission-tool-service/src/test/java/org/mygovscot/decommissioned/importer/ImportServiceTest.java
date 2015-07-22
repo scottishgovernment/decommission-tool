@@ -53,6 +53,24 @@ public class ImportServiceTest {
     }
 
     @Test
+    public void greenPathMultipleHosts() {
+
+        // ARRANGE
+        String csv = "http://www.multi.com/onemulti, /one-redirect\n" +
+                "http://multi.com/twomulti, /two-redirect";
+
+        // ACT
+        sut.importRedirects("morethanonehost", csv);
+
+        // ASSERT
+        Site site = siteRepository.findOne("morethanonehost");
+        Page page1 = page(site, "/onemulti", "/one-redirect");
+        Page page2 = page(site, "/twomulti", "/two-redirect");
+        Mockito.verify(pageRepository).save(Mockito.eq(page1));
+        Mockito.verify(pageRepository).save(Mockito.eq(page2));
+    }
+
+    @Test
     public void emptyTargetDefaultsToHomePage() {
 
         // ARRANGE
@@ -175,6 +193,4 @@ public class ImportServiceTest {
         Mockito.verify(pageRepository, Mockito.never()).save(Mockito.eq(page(null, "/one", "/one-redirect")));
         Mockito.verify(pageRepository, Mockito.never()).save(Mockito.eq(page(null, "/two", "/two-redirect")));
     }
-
-
 }

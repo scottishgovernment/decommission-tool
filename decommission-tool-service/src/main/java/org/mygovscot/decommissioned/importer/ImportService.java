@@ -21,6 +21,9 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class ImportService {
@@ -96,10 +99,14 @@ public class ImportService {
 
     }
 
+    private Set<String> getHosts(Site site) {
+        return Arrays.stream(site.getHost().split(" ")).collect(Collectors.toSet());
+    }
+
     private String cleanSourceUrl(Site site, String srcUrl) {
         try {
             URI uri= new URI(srcUrl);
-            if (uri.getHost() != null && !uri.getHost().equals(site.getHost())) {
+            if (uri.getHost() != null && !getHosts(site).contains(uri.getHost())) {
                 throw new IllegalArgumentException(
                         String.format("Host does not match site: >%s< != >%s<", uri.getHost(), site.getHost()));
             }
