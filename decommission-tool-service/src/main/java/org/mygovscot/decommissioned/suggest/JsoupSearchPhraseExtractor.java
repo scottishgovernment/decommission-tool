@@ -21,7 +21,8 @@ public class JsoupSearchPhraseExtractor implements SearchPhraseExtractor {
     public String extract(Page page) throws IOException {
 
         // fetch the page
-        String url = "http://"+page.getSite().getHost()+page.getSrcUrl();
+        String firstHost = page.getSite().getHost().split(" ")[0];
+        String url = "http://"+firstHost+page.getSrcUrl();
         Document doc = documentSource.getDocument(url);
 
         // iterate over the selectors until we get one with a non empty value
