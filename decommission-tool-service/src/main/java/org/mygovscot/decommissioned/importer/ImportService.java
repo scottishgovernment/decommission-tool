@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +35,6 @@ public class ImportService {
     @Autowired
     private SiteRepository siteRepository;
 
-    @Transactional
     public ImportResult importRedirects(String siteId, String csvSource) {
         InputStream is = new ByteArrayInputStream(csvSource.getBytes(StandardCharsets.UTF_8));
         Site site = siteRepository.findOne(siteId);
@@ -49,8 +47,10 @@ public class ImportService {
             int added = 0;
             int skipped = 0;
 
+            //TODO: remove dups using streams
             CSVParser parser = new CSVParser(new InputStreamReader(is, StandardCharsets.UTF_8), CSVFormat.newFormat(','));
             for (CSVRecord record : parser.getRecords()) {
+                LOG.info("line "+(added + skipped));
                 if (processRecord(site, record)) {
                     added++;
                 } else {
@@ -88,9 +88,6 @@ public class ImportService {
             return false;
         }
 
-        if (page == null) {
-            page = new Page();
-        }
         page.setSite(site);
         page.setSrcUrl(srcUrl);
         page.setTargetUrl(targetUrl);
