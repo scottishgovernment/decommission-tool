@@ -19,11 +19,9 @@ public interface PageRepository extends JpaRepository<Page, String> {
 
     Page findOne(String id);
 
-    Page findOneBySiteIdAndSrcUrl(@Param("siteId")String siteId, @Param("srcUrl")String srcUrl);
+    Page findOneBySiteIdAndSrcUrl(String siteId, String srcUrl);
 
-    Page findOneBySiteId(@Param("siteId")String siteId);
-
-    Page findOneBySrcUrl(@Param("srcUrl")String srcUrl);
+    List<Page> findBySiteIdAndSrcUrlIn(String siteId, List<String> srcUrl);
 
     @Modifying
     @Query("delete from Page where id in (:ids) and locked = false")

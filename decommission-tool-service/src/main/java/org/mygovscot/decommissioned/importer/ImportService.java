@@ -21,7 +21,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -45,25 +48,41 @@ public class ImportService {
 
         try {
             int added = 0;
-            int skipped = 0;
 
-            //TODO: remove dups using streams
+            // parse the csv and remove duplicates
             CSVParser parser = new CSVParser(new InputStreamReader(is, StandardCharsets.UTF_8), CSVFormat.newFormat(','));
-            for (CSVRecord record : parser.getRecords()) {
-                LOG.info("line "+(added + skipped));
-                if (processRecord(site, record)) {
+            List<CSVRecord> records = parser.getRecords().stream()
+                    .distinct().collect(Collectors.toList());
+
+            // get a list of all src urls mentioned
+            List<String> srcUrls = records.stream().map(t -> t.get(0)).collect(Collectors.toList());
+
+            // fetch all pages that are mentioned in one gulp and map them by their src url
+            Map<String, Page> seenPagesBySrcUrl = pageRepository.findBySiteIdAndSrcUrlIn(site.getId(), srcUrls)
+                    .stream()
+                    .collect(Collectors.toMap(p -> cleanSourceUrl(site, p.getSrcUrl()), Function.identity()));
+
+            // group the records in the csv by their srcUrl
+            Map<String, List<CSVRecord>> srcToRecord = records.stream().collect(Collectors.groupingBy(t -> t.get(0)));
+
+            // process each record
+            for (Map.Entry<String, List<CSVRecord>> entry : srcToRecord.entrySet()) {
+
+                // take the last entry for each srcUrl
+                CSVRecord lastRecord = entry.getValue().get(entry.getValue().size() - 1);
+
+                if (processRecord(site, lastRecord, seenPagesBySrcUrl)) {
                     added++;
-                } else {
-                    skipped++;
                 }
             }
-            return new ImportResult(added, skipped);
+
+            return new ImportResult(added, records.size() - added);
         } catch (IOException ioe) {
             throw new IllegalArgumentException("Unable to read csv", ioe);
         }
     }
 
-    private boolean processRecord(Site site, CSVRecord record) {
+    private boolean processRecord(Site site, CSVRecord record, Map<String, Page> seenPagesBySrcUrl) {
 
         if (record.size() < 1 || record.size() > 2) {
             throw new IllegalArgumentException(
@@ -71,34 +90,57 @@ public class ImportService {
                             record.getRecordNumber(), record.size()));
         }
 
-        String srcUrl = record.get(0).trim();
+        // trim and tidy the urls
+        String srcUrl = srcUrl(record, site);
+
         // default the target url to "/" and only override it if it is not empty
+        String targetUrl = targetUrl(record);
+
+        // see if this is already in the db or not
+        Page page = seenPagesBySrcUrl.get(srcUrl);
+
+        if (page == null) {
+            page = new Page();
+        } else {
+            // ignore locked items
+            if (page.isLocked()) {
+                LOG.info("Src url already mapped and locked: {} (mapped to {})", page.getSrcUrl(), page.getTargetUrl());
+                return false;
+            }
+
+            // ignore if the imported item is the same as the one already in the db
+            if (targetUrl.equals(page.getTargetUrl())) {
+                LOG.info("Src url already mapped and unchanged: {} (mapped to {})", page.getSrcUrl(), page.getTargetUrl());
+                return false;
+            }
+        }
+        // if the page was not present then create a new one
+        page.setSite(site);
+        page.setSrcUrl(srcUrl);
+        page.setTargetUrl(targetUrl);
+        LOG.debug("page: {} -> {}", page.getSrcUrl(), page.getTargetUrl());
+
+        pageRepository.save(page);
+
+        return true;
+
+    }
+
+    private String srcUrl(CSVRecord record, Site site) {
+        String srcUrl = record.get(0).trim();
+        srcUrl = cleanSourceUrl(site, srcUrl);
+        return srcUrl;
+    }
+
+    private String targetUrl(CSVRecord record) {
         String targetUrl = "/";
         if (record.size() == 2 && !record.get(1).trim().isEmpty()) {
             targetUrl = record.get(1).trim();
         }
-
-        srcUrl = cleanSourceUrl(site, srcUrl);
-
-        // check if there are any pages with this srcUrl
-        Page page = pageRepository.findOneBySiteIdAndSrcUrl(site.getId(), srcUrl);
-
-        if (page != null && page.isLocked()) {
-            LOG.info("Src url already mapped and locked: {} (mapped to {})", page.getSrcUrl(), page.getTargetUrl());
-            return false;
-        }
-
-        if (page == null) {
-            page = new Page();
-        }
-        page.setSite(site);
-        page.setSrcUrl(srcUrl);
-        page.setTargetUrl(targetUrl);
-        LOG.info("page: {} -> {}", page.getSrcUrl(), page.getTargetUrl());
-        pageRepository.save(page);
-        return true;
-
+        return targetUrl;
     }
+
+
 
     private Set<String> getHosts(Site site) {
         return Arrays.stream(site.getHost().split(" ")).collect(Collectors.toSet());
