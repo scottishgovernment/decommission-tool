@@ -71,20 +71,8 @@ public class Page {
         this.site = site;
     }
 
-    public List<PageSuggestion> getPageSuggestions() {
-        return pageSuggestions;
-    }
-
-    public void setPageSuggestions(List<PageSuggestion> pageSuggestions) {
-        this.pageSuggestions = pageSuggestions;
-    }
-
     public boolean isLocked() {
         return locked;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
     }
 
     @Override
@@ -119,17 +107,5 @@ public class Page {
                 .append(targetUrl)
                 .append(locked)
                 .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Page{" +
-                "id='" + id + '\'' +
-                ", site=" + site +
-                ", pageSuggestions=" + pageSuggestions +
-                ", srcUrl='" + srcUrl + '\'' +
-                ", targetUrl='" + targetUrl + '\'' +
-                ", locked=" + locked +
-                '}';
     }
 }

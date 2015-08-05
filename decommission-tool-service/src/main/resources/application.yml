@@ -3,7 +3,7 @@ application:
 
 logging:
   level:
-    org.springframework.web: INFO
+    org.springframework: INFO
     org.mygovscot: DEBUG
 
 server:

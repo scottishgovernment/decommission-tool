@@ -21,37 +21,16 @@ public class SuggestServiceTest {
     @Autowired
     SuggestService sut;
 
-    @Autowired
-    PageRepository pageRepository;
-
-    @Autowired
-    PageSuggestionRepository pageSuggestionRepository;
-
-    @Autowired
-    SiteRepository siteRepository;
-
-    @Autowired
-    SearchPhraseExtractor searchPhraseExtractor;
-
-    @Autowired
-    RestTemplate restTemplate;
-
-    @Autowired
-    Suggester suggester;
-
-    SuggesterListener listener = Mockito.mock(SuggesterListener.class);
-
     @Test(expected=IllegalArgumentException.class)
-    public void noSuchSite() throws IOException {
+    public void noSuchPage() throws IOException {
 
         // ARRANGE
 
         // ACT
-        SuggestResults results = sut.updateSuggestions("noSuchSite", listener);
+        sut.updateSuggestions("noSuchPage");
 
         // ASSERT - see expected exception
     }
-
 
     @Test
     public void greenPath() throws IOException {
@@ -59,10 +38,10 @@ public class SuggestServiceTest {
         // ARRANGE
 
         // ACT
-        SuggestResults results = sut.updateSuggestions("greenPath", listener);
+        sut.updateSuggestions("greenPath");
 
         // ASSERT
-        Assert.assertTrue(results.getSuggestionsCount() == 2);
+        // assert expected call made to add page suggestions
     }
 
     @Test(expected=IOException.class)
@@ -71,7 +50,7 @@ public class SuggestServiceTest {
         // ARRANGE
 
         // ACT
-        SuggestResults results = sut.updateSuggestions("upchuckingExtractor", listener);
+        sut.updateSuggestions("/upchuckingExtractor");
 
         // ASSERT -- see expected exception
     }
@@ -82,7 +61,7 @@ public class SuggestServiceTest {
         // ARRANGE
 
         // ACT
-        SuggestResults results = sut.updateSuggestions("upchuckingSuggester", listener);
+        sut.updateSuggestions("/upchuckingSuggester");
 
         // ASSERT -- see expected exception
     }

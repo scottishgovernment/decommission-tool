@@ -77,6 +77,7 @@ public class ImportService {
         if (record.size() == 2 && !record.get(1).trim().isEmpty()) {
             targetUrl = record.get(1).trim();
         }
+
         srcUrl = cleanSourceUrl(site, srcUrl);
 
         // check if there are any pages with this srcUrl
@@ -110,12 +111,12 @@ public class ImportService {
                 throw new IllegalArgumentException(
                         String.format("Host does not match site: >%s< != >%s<", uri.getHost(), site.getHost()));
             }
-            StringBuilder cleanUri = new StringBuilder(uri.getPath());
-            if (!StringUtils.isEmpty(uri.getFragment())) {
-                cleanUri.append('#').append(uri.getFragment());
-            }
-            return cleanUri.toString();
 
+            if (uri.getHost() != null) {
+                return StringUtils.substringAfter(srcUrl, uri.getHost());
+            } else {
+                return srcUrl;
+            }
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Invalid srcUrl", e);
         }

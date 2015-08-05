@@ -4,6 +4,8 @@ package org.mygovscot.decommissioned.importer;
 import org.aspectj.lang.annotation.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import org.mockito.Mockito;
 import org.mygovscot.beta.config.BetaConfigInitializer;
 import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
@@ -48,8 +50,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("greenPath");
         Page page1 = page(site, "/onegp", "/one-redirect");
         Page page2 = page(site, "/twogp", "/two-redirect");
-        Mockito.verify(pageRepository).save(Mockito.eq(page1));
-        Mockito.verify(pageRepository).save(Mockito.eq(page2));
+        Mockito.verify(pageRepository).save(eq(page1));
+        Mockito.verify(pageRepository).save(eq(page2));
     }
 
     @Test
@@ -66,8 +68,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("morethanonehost");
         Page page1 = page(site, "/onemulti", "/one-redirect");
         Page page2 = page(site, "/twomulti", "/two-redirect");
-        Mockito.verify(pageRepository).save(Mockito.eq(page1));
-        Mockito.verify(pageRepository).save(Mockito.eq(page2));
+        Mockito.verify(pageRepository).save(eq(page1));
+        Mockito.verify(pageRepository).save(eq(page2));
     }
 
     @Test
@@ -85,8 +87,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("emptyTarget");
         Page page1 = page(site, "/oneemp", "/");
         Page page2 = page(site, "/twoemp", "/two-redirect");
-        Mockito.verify(pageRepository).save(Mockito.eq(page1));
-        Mockito.verify(pageRepository).save(Mockito.eq(page2));
+        Mockito.verify(pageRepository).save(eq(page1));
+        Mockito.verify(pageRepository).save(eq(page2));
     }
 
     @Test
@@ -103,8 +105,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("emptyTarget");
         Page page1 = page(site, "/one", "/");
         Page page2 = page(site, "/two", "/two-redirect");
-        Mockito.verify(pageRepository).save(Mockito.eq(page1));
-        Mockito.verify(pageRepository).save(Mockito.eq(page2));
+        Mockito.verify(pageRepository).save(eq(page1));
+        Mockito.verify(pageRepository).save(eq(page2));
     }
 
     @Test
@@ -121,26 +123,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("greenPathWithHost");
         Page page1 = page(site, "/one", "/one-redirect");
         Page page2 = page(site, "/two", "/two-redirect");
-        Mockito.verify(pageRepository).save(Mockito.eq(page1));
-        Mockito.verify(pageRepository).save(Mockito.eq(page2));
-    }
-
-    @Test
-    public void greenPathWithFragments() {
-
-        // ARRANGE
-        String csv = "http://www.greenpath.com/one#fragone, /one-redirect\n" +
-                "http://www.greenpath.com/two?param1=one&params2=two#fragtwo, /two-redirect";
-
-        // ACT
-        sut.importRedirects("greenPathWithHost", csv);
-
-        // ASSERT
-        Site site = siteRepository.findOne("greenPathWithHost");
-        Page page1 = page(site, "/one#fragone", "/one-redirect");
-        Page page2 = page(site, "/two#fragtwo", "/two-redirect");
-        Mockito.verify(pageRepository).save(Mockito.eq(page1));
-        Mockito.verify(pageRepository).save(Mockito.eq(page2));
+        Mockito.verify(pageRepository).save(eq(page1));
+        Mockito.verify(pageRepository).save(eq(page2));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -190,7 +174,22 @@ public class ImportServiceTest {
         sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        Mockito.verify(pageRepository, Mockito.never()).save(Mockito.eq(page(null, "/one", "/one-redirect")));
-        Mockito.verify(pageRepository, Mockito.never()).save(Mockito.eq(page(null, "/two", "/two-redirect")));
+        Mockito.verify(pageRepository, Mockito.never()).save(eq(page(null, "/one", "/one-redirect")));
+        Mockito.verify(pageRepository, Mockito.never()).save(eq(page(null, "/two", "/two-redirect")));
+    }
+
+    @Test
+    public void srcUrlContainingEncodesSpaces() {
+        // ARRANGE
+        Site site = siteRepository.findOne("prePopulated");
+        String csv = "/one%20, /one-redirect\n" +
+                "/two%20three, /two-redirect";
+
+        // ACT
+        sut.importRedirects("prePopulated", csv);
+
+        // ASSERT
+        Mockito.verify(pageRepository).save(eq(page(site, "/one%20", "/one-redirect")));
+        Mockito.verify(pageRepository).save(eq(page(site, "/two%20three", "/two-redirect")));
     }
 }

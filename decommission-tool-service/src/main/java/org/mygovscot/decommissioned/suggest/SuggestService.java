@@ -2,10 +2,8 @@ package org.mygovscot.decommissioned.suggest;
 
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.PageSuggestion;
-import org.mygovscot.decommissioned.model.Site;
 import org.mygovscot.decommissioned.repository.PageRepository;
 import org.mygovscot.decommissioned.repository.PageSuggestionRepository;
-import org.mygovscot.decommissioned.repository.SiteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +24,6 @@ public class SuggestService {
     private PageSuggestionRepository pageSuggestionRepository;
 
     @Autowired
-    private SiteRepository siteRepository;
-
-    @Autowired
     private PageRepository pageRepository;
 
     @Autowired
@@ -38,28 +33,19 @@ public class SuggestService {
     private Suggester suggester;
 
     @Transactional
-    public SuggestResults updateSuggestions(String siteId, SuggesterListener listener) throws IOException {
+    public int updateSuggestions(String pageId) throws IOException {
+        Page page = pageRepository.findOne(pageId);
 
-        Site site = siteRepository.findOne(siteId);
-        if (site == null) {
-            throw new IllegalArgumentException("No such site:"+siteId);
+        if (page == null) {
+            throw new IllegalArgumentException("Page not found: "+pageId);
         }
-
-        LOG.debug("updateSuggestions {} {}", siteId, site.getHost());
-        int replacementCount = 0;
-
-        for (Page page : site.getPages()) {
-            String searchPhrase = searchPhraseExtractor.extract(page);
-            replacementCount += updateSuggestionsForPage(page, searchPhrase, listener);
-        }
-        LOG.debug("done");
-        listener.end();
-
-        return new SuggestResults(replacementCount);
+        LOG.info("page: {}" + page);
+        String searchPhrase = searchPhraseExtractor.extract(page);
+        LOG.info("phrase: {}"+searchPhrase);
+        return updateSuggestionsForPage(page, searchPhrase);
     }
 
-    private int updateSuggestionsForPage(Page page, String searchPhrase, SuggesterListener listener) throws IOException {
-        listener.processingPage(page);
+    private int updateSuggestionsForPage(Page page, String searchPhrase) throws IOException {
 
         if (page.isLocked()) {
             LOG.debug("\tpage={} is locked, skipping", page.getSrcUrl());
@@ -92,7 +78,5 @@ public class SuggestService {
         }
         return replacements;
     }
-
-
 
 }

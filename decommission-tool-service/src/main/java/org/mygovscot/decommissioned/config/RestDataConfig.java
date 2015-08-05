@@ -1,6 +1,7 @@
 package org.mygovscot.decommissioned.config;
 
 import org.mygovscot.decommissioned.model.Page;
+import org.mygovscot.decommissioned.model.PageSuggestion;
 import org.mygovscot.decommissioned.model.Site;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -14,8 +15,9 @@ public class RestDataConfig extends RepositoryRestMvcConfiguration {
     @Override
     protected void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
         super.configureRepositoryRestConfiguration(config);
-        config.exposeIdsFor(Site.class);
         config.exposeIdsFor(Page.class);
+        config.exposeIdsFor(Site.class);
+        config.exposeIdsFor(PageSuggestion.class);
         config.setBaseUri("redirects");
     }
 }

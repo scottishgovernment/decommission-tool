@@ -31,6 +31,7 @@ public class ElasticSearchSuggester implements Suggester {
                 suggestions.add(hit.get("_source").get("url").asText());
             }
         }
+
         return suggestions;
     }
 

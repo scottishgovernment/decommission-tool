@@ -3,10 +3,8 @@ package org.mygovscot.decommissioned.suggest;
 import org.mockito.Mockito;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
-import org.mygovscot.decommissioned.repository.JobRepository;
 import org.mygovscot.decommissioned.repository.PageRepository;
 import org.mygovscot.decommissioned.repository.PageSuggestionRepository;
-import org.mygovscot.decommissioned.repository.SiteRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,12 +18,11 @@ public class SuggestServiceTestConfig {
     @Bean
     public PageRepository getPageRepository() {
         PageRepository pageRepository = Mockito.mock(PageRepository.class);
-        return pageRepository;
-    }
+        Mockito.when(pageRepository.findOne(Mockito.eq("greenPath"))).thenReturn(page("/greenPath"));
+        Mockito.when(pageRepository.findOne(Mockito.eq("/upchuckingSuggester"))).thenReturn(page("/upchuckingSuggester"));
+        Mockito.when(pageRepository.findOne(Mockito.eq("/upchuckingExtractor"))).thenReturn(page("/upchuckingExtractor"));
 
-    @Bean
-    public JobRepository getJobRepository() {
-        return Mockito.mock(JobRepository.class);
+        return pageRepository;
     }
 
     @Bean
@@ -42,8 +39,7 @@ public class SuggestServiceTestConfig {
     public SearchPhraseExtractor searchPhraseExtractor() throws IOException {
         SearchPhraseExtractor mock = Mockito.mock(SearchPhraseExtractor.class);
         Page greenPathPage = new Page();
-        Mockito.when(mock.extract(Mockito.eq(page("/page1")))).thenReturn("searchPhrase");
-        Mockito.when(mock.extract(Mockito.eq(page("/page2")))).thenReturn("searchPhrase");
+        Mockito.when(mock.extract(Mockito.eq(page("/greenPath")))).thenReturn("searchPhrase");
         Mockito.when(mock.extract(Mockito.eq(page("/upchuckingSuggester")))).thenReturn("upchuckingSuggester");
         Mockito.when(mock.extract(Mockito.eq(page("/upchuckingExtractor")))).thenThrow(new IOException("dummy"));
         return mock;
@@ -64,20 +60,6 @@ public class SuggestServiceTestConfig {
                 .thenThrow(new IllegalArgumentException("dummy"));
 
         return s;
-    }
-
-    @Bean
-    public SiteRepository getSiteRepository() {
-        SiteRepository siteRepository = Mockito.mock(SiteRepository.class);
-        Mockito.when(siteRepository.findOne(Mockito.any(String.class)))
-                .thenReturn(site("greenPath", "/page1", "/page2"));
-        Mockito.when(siteRepository.findOne("upchuckingExtractor"))
-                .thenReturn(site("upchuckingExtractor", "/upchuckingExtractor"));
-        Mockito.when(siteRepository.findOne("upchuckingSuggester"))
-                .thenReturn(site("upchuckingSuggester", "/upchuckingSuggester"));
-        Mockito.when(siteRepository.findOne("noSuchSite"))
-                .thenReturn(null);
-        return siteRepository;
     }
 
     private Site site(String id, String ... srcUrls) {
