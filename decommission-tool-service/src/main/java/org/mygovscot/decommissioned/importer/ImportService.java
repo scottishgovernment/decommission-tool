@@ -88,6 +88,9 @@ public class ImportService {
             return false;
         }
 
+        if (page == null) {
+            page = new Page();
+        }
         page.setSite(site);
         page.setSrcUrl(srcUrl);
         page.setTargetUrl(targetUrl);
