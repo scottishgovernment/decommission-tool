@@ -4,13 +4,12 @@ import org.springframework.util.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Arrays;
 
 public class HostValidator implements ConstraintValidator<Host, String> {
 
-    private static final String IP_ADDRESS_REGEX = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
+    public static final String IP_ADDRESS_REGEX = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
 
-    private static final String HOST_REGEX = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$";
+    public static final String HOST_REGEX = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$";
 
     @Override
     public void initialize(Host host) {
@@ -25,14 +24,7 @@ public class HostValidator implements ConstraintValidator<Host, String> {
             return false;
         }
 
-        // space spearated list f valid hostnames
-        if (!Arrays.stream(host.trim()
-                .split(" "))
-                .allMatch(h -> h.matches(IP_ADDRESS_REGEX) || h.matches(HOST_REGEX))) {
-            return false;
-        }
-
-        return true;
+        return host.matches(IP_ADDRESS_REGEX) || host.matches(HOST_REGEX);
     }
 
 }

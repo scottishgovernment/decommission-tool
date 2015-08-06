@@ -2,6 +2,7 @@ package org.mygovscot.decommissioned.validation;
 
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
+import org.mygovscot.decommissioned.model.WhitelistedHost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -59,16 +60,19 @@ public class SiteExceptionHandler extends ResponseEntityExceptionHandler {
         Set<SiteViolation> violations = new HashSet<>();
         for (ConstraintViolation<?> violation : constraintViolations) {
             SiteViolation siteViolation = new SiteViolation();
+
             if (violation.getRootBean() instanceof Page) {
                 Page page = (Page) violation.getRootBean();
                 siteViolation.setSite(page.getSite().getId());
                 siteViolation.setPage(page.getId());
+            } else if (violation.getRootBean() instanceof WhitelistedHost) {
+                WhitelistedHost whitelistedHost = (WhitelistedHost) violation.getRootBean();
+                siteViolation.setHost(whitelistedHost.getHost());
             } else {
                 Site site = (Site) violation.getRootBean();
                 siteViolation.setSite(site.getId());
             }
             siteViolation.setViolation(violation.getMessage());
-            siteViolation.setPath(violation.getPropertyPath() + "");
             violations.add(siteViolation);
         }
         return violations;
@@ -83,6 +87,8 @@ public class SiteExceptionHandler extends ResponseEntityExceptionHandler {
         private String path;
 
         private String page;
+
+        private String host;
 
         public String getSite() {
             return site;
@@ -116,6 +122,13 @@ public class SiteExceptionHandler extends ResponseEntityExceptionHandler {
             return page;
         }
 
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
     }
 
 }

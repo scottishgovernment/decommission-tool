@@ -4,7 +4,7 @@ application:
 logging:
   level:
     org.springframework: INFO
-    org.mygovscot: DEBUG
+    org.mygovscot: INFO
 
 server:
     port: 8089
@@ -20,7 +20,7 @@ spring:
     database: POSTGRESQL
     hibernate.ddl-auto: none
     generate-ddl: false
-    show-sql: false
+    show-sql: true
 authentication:
     enabled: false
     endpoint: http://localhost:8086/security/

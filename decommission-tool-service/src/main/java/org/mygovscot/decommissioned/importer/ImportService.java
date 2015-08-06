@@ -151,7 +151,7 @@ public class ImportService {
             URI uri= new URI(srcUrl);
             if (uri.getHost() != null && !getHosts(site).contains(uri.getHost())) {
                 throw new IllegalArgumentException(
-                        String.format("Host does not match site: >%s< != >%s<", uri.getHost(), site.getHost()));
+                        String.format("HostsList does not match site: >%s< != >%s<", uri.getHost(), site.getHost()));
             }
 
             if (uri.getHost() != null) {

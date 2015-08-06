@@ -5,11 +5,11 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class HostValidatorTest {
+public class HostsListValidatorTest {
 
     @Test
     public void testIsValid() throws Exception {
-        HostValidator hostValidator = new HostValidator();
+        HostsListValidator hostValidator = new HostsListValidator();
         hostValidator.initialize(null);
 
         assertTrue(hostValidator.isValid("server", null));

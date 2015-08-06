@@ -3,7 +3,7 @@ package org.mygovscot.decommissioned.model;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
-import org.mygovscot.decommissioned.validation.Host;
+import org.mygovscot.decommissioned.validation.HostsList;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -22,8 +22,8 @@ public class Site {
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     private String id;
 
-    @NotNull(message = "Please specify a host")
-    @Host(message = "Host must be a unique host or ip address")
+    @NotNull(message = "Please specify a host (or hosts)")
+    @HostsList(message = "HostsList must be a space separated list of valid host or ip address")
     private String host;
 
     @NotNull(message = "Please specify a name")
