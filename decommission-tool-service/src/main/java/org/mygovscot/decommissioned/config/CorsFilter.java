@@ -5,7 +5,6 @@
  */
 package org.mygovscot.decommissioned.config;
 
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,7 +20,6 @@ import java.io.IOException;
  *
  */
 @Component
-@Order(10)
 public class CorsFilter  extends OncePerRequestFilter {
 
     private static final String ACAO = "Access-Control-Allow-Origin";

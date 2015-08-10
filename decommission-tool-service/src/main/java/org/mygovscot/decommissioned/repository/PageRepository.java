@@ -12,7 +12,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @RepositoryRestResource
-@Transactional(Transactional.TxType.REQUIRES_NEW)
 public interface PageRepository extends JpaRepository<Page, String> {
 
     List<Page> findAll();
@@ -23,14 +22,17 @@ public interface PageRepository extends JpaRepository<Page, String> {
 
     List<Page> findBySiteIdAndSrcUrlIn(String siteId, List<String> srcUrl);
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Modifying
     @Query("delete from Page where id in (:ids) and locked = false")
     void bulkDelete(@Param("ids") List<String> ids);
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Modifying
     @Query("update Page set targetUrl = :targeturl where id in (:ids) and locked = false")
     void bulkSetTarget(@Param("ids") List<String> ids, @Param("targeturl") String targetUrl);
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Modifying
     @Query("update Page set locked = :locked where id in (:ids)")
     void bulkSetLock(@Param("ids") List<String> ids, @Param("locked") boolean locked);

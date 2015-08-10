@@ -20,7 +20,8 @@ spring:
     database: POSTGRESQL
     hibernate.ddl-auto: none
     generate-ddl: false
-    show-sql: true
+    show-sql: false
+
 authentication:
     enabled: false
     endpoint: http://localhost:8086/security/

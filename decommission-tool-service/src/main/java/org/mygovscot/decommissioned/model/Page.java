@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.mygovscot.decommissioned.validation.Path;
+import org.mygovscot.decommissioned.validation.PathOrURL;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -34,7 +35,7 @@ public class Page {
     private String srcUrl;
 
     @NotNull(message = "Page target must be specified")
-    @Path(message = "Target url must be a valid path")
+    @PathOrURL(message = "Target url must be a valid path or fully qualified url with a whitelisted host")
     private String targetUrl;
 
     private boolean locked;

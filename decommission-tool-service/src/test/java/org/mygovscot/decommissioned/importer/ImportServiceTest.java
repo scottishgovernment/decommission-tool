@@ -1,6 +1,7 @@
 package org.mygovscot.decommissioned.importer;
 
 
+import junit.framework.Assert;
 import org.aspectj.lang.annotation.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -133,10 +134,19 @@ public class ImportServiceTest {
         sut.importRedirects("noSuchSite", csv);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void invalidURI() {
+
+        // ARRANGE
         String csv = "hhh:// /o    INVALID ne, /one-redirect";
-        sut.importRedirects("invalidURI", csv);
+        ImportResult expected = new ImportResult(
+                Collections.singletonList(new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid srcUrl", 1)));
+
+        // ACT
+        ImportResult actual = sut.importRedirects("invalidURI", csv);
+
+        // ASSERT
+        Assert.assertEquals(expected, actual);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -144,23 +154,29 @@ public class ImportServiceTest {
         // ARRANGE
         String csv = "http://www.wronghost-different.com/one, /one-redirect\n" +
                 "http://www.wronghost.com/two, /two-redirect";
+        ImportResult expected = new ImportResult(
+                Collections.singletonList(new ImportRecordResult(ImportRecordResult.Type.ERROR, "", 1)));
 
         // ACT
-        sut.importRedirects("wrongHost", csv);
+        ImportResult actual = sut.importRedirects("wrongHost", csv);
 
-        // ASSERT -- see expected exception
+        // ASSERT
+        Assert.assertEquals(actual, expected);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void tooManyRecords() {
         // ARRANGE
-        String csv = "/one, /one-redirect,what am I?\n" +
-                "/two, /two-redirect";
+        String csv = "/one, /one-redirect,what am I?";
+        ImportResult expected = new ImportResult(
+                Collections.singletonList(new ImportRecordResult(ImportRecordResult.Type.ERROR, "Wrong Number of Fields", 1)));
+
 
         // ACT
-        sut.importRedirects("greenPath", csv);
+        ImportResult actual = sut.importRedirects("greenPath", csv);
 
-        // ASSERT -- see expected exception
+        // ASSERT
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
