@@ -22,7 +22,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @ContextConfiguration(classes=ImportServiceTestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -135,12 +137,27 @@ public class ImportServiceTest {
     }
 
     @Test
-    public void invalidURI() {
+    public void invalidSrcURI() {
 
         // ARRANGE
         String csv = "hhh:// /o    INVALID ne, /one-redirect";
         ImportResult expected = new ImportResult(
                 Collections.singletonList(new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid srcUrl", 1)));
+
+        // ACT
+        ImportResult actual = sut.importRedirects("invalidURI", csv);
+
+        // ASSERT
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void targetURLNotWhitelisted() {
+
+        // ARRANGE
+        String csv = "/one,http://black.com/";
+        ImportResult expected = new ImportResult(
+                Collections.singletonList(new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid targetUrl", 1)));
 
         // ACT
         ImportResult actual = sut.importRedirects("invalidURI", csv);
@@ -207,5 +224,46 @@ public class ImportServiceTest {
         // ASSERT
         Mockito.verify(pageRepository).save(eq(page(site, "/one%20", "/one-redirect")));
         Mockito.verify(pageRepository).save(eq(page(site, "/two%20three", "/two-redirect")));
+    }
+
+    @Test
+    public void importTestResult() {
+        ImportTypeResult one = new ImportTypeResult(ImportRecordResult.Type.ERROR, "msg", Collections.singletonList(new Long(1)));
+        ImportTypeResult two = new ImportTypeResult(ImportRecordResult.Type.ERROR, "msg", Collections.singletonList(new Long(1)));
+        Set<ImportTypeResult> set = new HashSet<>();
+        set.add(one);
+
+        Assert.assertTrue(set.contains(two));
+        Assert.assertTrue(one.equals(one));
+        Assert.assertTrue(one.equals(two));
+        Assert.assertFalse(one.equals(one.toString()));
+        ;
+    }
+
+    @Test
+    public void importRecordResult() {
+        ImportRecordResult one = new ImportRecordResult(ImportRecordResult.Type.ERROR, "msg", new Long(1));
+        ImportRecordResult two = new ImportRecordResult(ImportRecordResult.Type.ERROR, "msg", new Long(1));
+        Set<ImportRecordResult> set = new HashSet<>();
+        set.add(one);
+
+        Assert.assertTrue(set.contains(two));
+        Assert.assertTrue(one.equals(one));
+        Assert.assertTrue(one.equals(two));
+        Assert.assertFalse(one.equals(one.toString()));
+    }
+
+    @Test
+    public void importResult() {
+        ImportRecordResult recRes = new ImportRecordResult(ImportRecordResult.Type.ERROR, "msg", new Long(1));
+        ImportResult one = new ImportResult(Collections.singletonList(recRes));
+        ImportResult two = new ImportResult(Collections.singletonList(recRes));
+        Set<ImportResult> set = new HashSet<>();
+        set.add(one);
+
+        Assert.assertTrue(set.contains(two));
+        Assert.assertTrue(one.equals(one));
+        Assert.assertTrue(one.equals(two));
+        Assert.assertFalse(one.equals(one.toString()));
     }
 }
