@@ -1,5 +1,7 @@
 package org.mygovscot.decommissioned.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.mygovscot.decommissioned.validation.Path;
 import org.mygovscot.decommissioned.validation.PathOrURL;
@@ -108,43 +110,34 @@ public class Page {
         if (this == o) {
             return true;
         }
+
         if (!(o instanceof Page)) {
             return false;
         }
 
         Page page = (Page) o;
 
-        if (locked != page.locked) {
-            return false;
-        }
-        if (id != null ? !id.equals(page.id) : page.id != null) {
-            return false;
-        }
-        if (site != null ? !site.equals(page.site) : page.site != null) {
-            return false;
-        }
-        if (pageSuggestions != null ? !pageSuggestions.equals(page.pageSuggestions) : page.pageSuggestions != null) {
-            return false;
-        }
-        if (srcUrl != null ? !srcUrl.equals(page.srcUrl) : page.srcUrl != null) {
-            return false;
-        }
-        if (targetUrl != null ? !targetUrl.equals(page.targetUrl) : page.targetUrl != null) {
-            return false;
-        }
-        return type == page.type;
-
+        return new EqualsBuilder()
+                .append(locked, page.locked)
+                .append(id, page.id)
+                .append(site, page.site)
+                .append(pageSuggestions, page.pageSuggestions)
+                .append(srcUrl, page.srcUrl)
+                .append(targetUrl, page.targetUrl)
+                .append(type, page.type)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (site != null ? site.hashCode() : 0);
-        result = 31 * result + (pageSuggestions != null ? pageSuggestions.hashCode() : 0);
-        result = 31 * result + (srcUrl != null ? srcUrl.hashCode() : 0);
-        result = 31 * result + (targetUrl != null ? targetUrl.hashCode() : 0);
-        result = 31 * result + (locked ? 1 : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(site)
+                .append(pageSuggestions)
+                .append(srcUrl)
+                .append(targetUrl)
+                .append(locked)
+                .append(type)
+                .toHashCode();
     }
 }

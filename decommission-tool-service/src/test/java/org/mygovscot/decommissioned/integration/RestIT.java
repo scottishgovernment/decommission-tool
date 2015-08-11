@@ -122,6 +122,7 @@ public class RestIT {
         page.setSite(site);
         page.setSrcUrl("/mypage");
         page.setTargetUrl("/mypage.html");
+        page.setType(Page.MatchType.EXACT);
 
         // Check that the repository has no documents
         assertEquals(0, pageRepository.findAll().size());
@@ -196,11 +197,11 @@ public class RestIT {
         private String id;
         private String srcUrl;
         private String targetUrl;
-        private String matchLevel;
+        private String type;
 
         public PathRepresentation(Page page, String siteUrl) {
             this.site = siteUrl;
-
+            this.type = Page.MatchType.EXACT.toString();
             BeanUtils.copyProperties(page, this, new String[]{"site"});
         }
 
@@ -236,12 +237,12 @@ public class RestIT {
             this.targetUrl = targetUrl;
         }
 
-        public String getMatchLevel() {
-            return matchLevel;
+        public String getType() {
+            return type;
         }
 
-        public void setMatchLevel(String matchLevel) {
-            this.matchLevel = matchLevel;
+        public void setType(String type) {
+            this.type = type;
         }
     }
 }
