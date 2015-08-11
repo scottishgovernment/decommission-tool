@@ -39,9 +39,8 @@ public class SuggestService {
         if (page == null) {
             throw new IllegalArgumentException("Page not found: "+pageId);
         }
-        LOG.info("page: {}" + page);
         String searchPhrase = searchPhraseExtractor.extract(page);
-        LOG.info("phrase: {}"+searchPhrase);
+        LOG.debug("phrase: {}", searchPhrase);
         return updateSuggestionsForPage(page, searchPhrase);
     }
 
