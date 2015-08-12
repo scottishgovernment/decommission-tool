@@ -125,6 +125,7 @@ public class ImportService {
         page.setSite(site);
         page.setSrcUrl(srcUrl);
         page.setTargetUrl(targetUrl);
+        page.setType(Page.MatchType.EXACT);
         LOG.debug("page: {} -> {}", page.getSrcUrl(), page.getTargetUrl());
 
         pageRepository.save(page);
