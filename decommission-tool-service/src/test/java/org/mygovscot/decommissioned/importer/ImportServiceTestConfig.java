@@ -60,6 +60,7 @@ public class ImportServiceTestConfig {
         p.setSite(site);
         p.setSrcUrl(srcUrl);
         p.setTargetUrl(targetUrl);
+        p.setType(Page.MatchType.EXACT);
         return p;
     }
 
