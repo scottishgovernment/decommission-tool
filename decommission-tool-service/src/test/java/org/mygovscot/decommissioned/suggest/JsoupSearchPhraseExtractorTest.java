@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @ContextConfiguration(classes=JsoupSearchPhraseExtractorTestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -26,6 +27,7 @@ public class JsoupSearchPhraseExtractorTest {
     public void greenpathTitleAndH1Present() throws IOException {
         Site site = new Site();
         site.setHost("www.titleandh1.com");
+        site.setSuggestionsSelectors(Collections.emptyList());
         Page page = new Page();
         page.setSrcUrl("/greenpath");
         page.setSite(site);
@@ -38,6 +40,7 @@ public class JsoupSearchPhraseExtractorTest {
     public void greenpathNoTitle() throws IOException {
         Site site = new Site();
         site.setHost("www.notitle.com");
+        site.setSuggestionsSelectors(Collections.emptyList());
         Page page = new Page();
         page.setSrcUrl("/greenpath");
         page.setSite(site);
@@ -49,6 +52,7 @@ public class JsoupSearchPhraseExtractorTest {
     public void greenpathEmptyTitle() throws IOException {
         Site site = new Site();
         site.setHost("www.emptytitle.com");
+        site.setSuggestionsSelectors(Collections.emptyList());
         Page page = new Page();
         page.setSrcUrl("/greenpath");
         page.setSite(site);
@@ -60,6 +64,7 @@ public class JsoupSearchPhraseExtractorTest {
          public void greenpathNoH1() throws IOException {
         Site site = new Site();
         site.setHost("www.noh1.com");
+        site.setSuggestionsSelectors(Collections.emptyList());
         Page page = new Page();
         page.setSrcUrl("/greenpath");
         page.setSite(site);
@@ -70,6 +75,7 @@ public class JsoupSearchPhraseExtractorTest {
     @Test
     public void greenpathEmptyH1() throws IOException {
         Site site = new Site();
+        site.setSuggestionsSelectors(Collections.emptyList());
         site.setHost("www.noh1.com");
         Page page = new Page();
         page.setSrcUrl("/greenpath");
@@ -82,6 +88,7 @@ public class JsoupSearchPhraseExtractorTest {
     public void greenpathNoH1OrTitle() throws IOException {
         Site site = new Site();
         site.setHost("www.notitleorh1.com");
+        site.setSuggestionsSelectors(Collections.emptyList());
         Page page = new Page();
         page.setSrcUrl("/greenpath");
         page.setSite(site);

@@ -20,7 +20,7 @@ spring:
     database: POSTGRESQL
     hibernate.ddl-auto: none
     generate-ddl: false
-    show-sql: false
+    show-sql: true
 
 authentication:
     enabled: false
