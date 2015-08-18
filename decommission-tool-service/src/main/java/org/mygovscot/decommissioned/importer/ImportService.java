@@ -199,10 +199,19 @@ public class ImportService {
                     String.format("HostsList does not match site: >%s< != >%s<", uri.getHost(), site.getHost()));
         }
 
+        // we want to strip paramaters but retain fragment identifier
+        String path = srcUrl;
+
         if (uri.getHost() != null) {
-            return StringUtils.substringAfter(srcUrl, uri.getHost());
-        } else {
-            return srcUrl;
+            path = StringUtils.substringAfter(srcUrl, uri.getHost());
         }
+        if (!StringUtils.isEmpty(uri.getQuery())) {
+            path = StringUtils.substringBefore(path, "?");
+
+            if (!StringUtils.isEmpty(uri.getFragment())) {
+                path = path + '#'+ uri.getFragment();
+            }
+        }
+        return path;
     }
 }

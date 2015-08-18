@@ -95,6 +95,21 @@ public class ImportServiceTest {
     }
 
     @Test
+    public void paramsInSrcUrlAreStripped() {
+
+        // ARRANGE
+        String csv = "/withparams?p1=one&p2=two";
+
+        // ACT
+        sut.importRedirects("withparams", csv);
+
+        // ASSERT
+        Site site = siteRepository.findOne("withparams");
+        Page page1 = page(site, "/withparams", "/");
+        Mockito.verify(pageRepository).save(eq(page1));
+    }
+
+    @Test
     public void noTargetColumnDefaultsToHomePage() {
 
         // ARRANGE

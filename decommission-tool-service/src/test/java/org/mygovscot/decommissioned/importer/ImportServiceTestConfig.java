@@ -22,6 +22,7 @@ public class ImportServiceTestConfig {
         Collections.addAll(sites,
                 site("invalidURI", "www.invalidurl.com"),
                 site("emptyTarget", "www.emptyTarget.com"),
+                site("withparams", "www.withparams.com"),
                 site("greenPath", "www.greenpath.com"),
                 site("greenPathWithHost", "www.greenpath.com"),
                 site("wrongHost", "www.wronghost.com"),

@@ -32,7 +32,6 @@ public class SuggestService {
     @Autowired
     private Suggester suggester;
 
-    @Transactional
     public int updateSuggestions(String pageId) throws IOException {
         Page page = pageRepository.findOne(pageId);
 

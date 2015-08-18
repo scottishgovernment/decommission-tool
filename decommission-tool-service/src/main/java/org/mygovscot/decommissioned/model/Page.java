@@ -140,4 +140,17 @@ public class Page {
                 .append(type)
                 .toHashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Page{" +
+                "id='" + id + '\'' +
+                ", site=" + site +
+                ", pageSuggestions=" + pageSuggestions +
+                ", srcUrl='" + srcUrl + '\'' +
+                ", targetUrl='" + targetUrl + '\'' +
+                ", locked=" + locked +
+                ", type=" + type +
+                '}';
+    }
 }
