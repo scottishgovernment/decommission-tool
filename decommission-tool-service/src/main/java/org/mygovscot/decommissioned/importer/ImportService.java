@@ -95,7 +95,7 @@ public class ImportService {
         String srcUrl = "";
         try {
             srcUrl = srcUrl(record, site);
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | IllegalArgumentException e) {
             LOG.info("Invalid src URI", e);
             return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid srcUrl", record.getRecordNumber());
         }
@@ -104,7 +104,7 @@ public class ImportService {
         String targetUrl = "/";
         try {
             targetUrl = targetUrl(record, site);
-        } catch (Exception e) {
+        } catch (URISyntaxException | IllegalArgumentException e) {
             LOG.info("Invalid target URI", e);
             return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid targetUrl", record.getRecordNumber());
         }
@@ -211,6 +211,11 @@ public class ImportService {
             if (!StringUtils.isEmpty(uri.getFragment())) {
                 path = path + '#'+ uri.getFragment();
             }
+        }
+
+        // the path should always start with a /
+        if (!path.startsWith("/")) {
+            throw new IllegalArgumentException("Path does not start with /");
         }
         return path;
     }

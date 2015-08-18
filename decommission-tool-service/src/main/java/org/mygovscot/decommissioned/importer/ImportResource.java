@@ -19,6 +19,10 @@ public class ImportResource {
     @RequestMapping(value= "{site}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ImportResult searchByTerm( @PathVariable("site") String site, @RequestBody String csv) {
-        return importService.importRedirects(site, csv);
+        try {
+            return importService.importRedirects(site, csv);
+        } catch (Throwable t) {
+            throw t;
+        }
     }
 }

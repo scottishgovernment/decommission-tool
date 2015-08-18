@@ -181,13 +181,12 @@ public class ImportServiceTest {
         Assert.assertEquals(expected, actual);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void wrongSiteHost() {
         // ARRANGE
-        String csv = "http://www.wronghost-different.com/one, /one-redirect\n" +
-                "http://www.wronghost.com/two, /two-redirect";
+        String csv = "http://www.wronghost-different.com/one, /one-redirect";
         ImportResult expected = new ImportResult(
-                Collections.singletonList(new ImportRecordResult(ImportRecordResult.Type.ERROR, "", 1)));
+                Collections.singletonList(new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid srcUrl", 1)));
 
         // ACT
         ImportResult actual = sut.importRedirects("wrongHost", csv);
