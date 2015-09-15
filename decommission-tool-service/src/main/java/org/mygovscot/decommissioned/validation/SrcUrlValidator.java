@@ -31,7 +31,7 @@ public class SrcUrlValidator implements ConstraintValidator<SrcUrl, Page> {
         }
 
         if (page.getType() == Page.MatchType.EXACT) {
-            return isValidUrlOrPath(srcUrl);
+            return isValidPath(srcUrl);
         }
 
         if (page.getType() == Page.MatchType.PCRE_REGEXP) {
@@ -42,16 +42,13 @@ public class SrcUrlValidator implements ConstraintValidator<SrcUrl, Page> {
 
     }
 
-    private boolean isValidUrlOrPath(String url) {
+    private boolean isValidPath(String path) {
         try {
-            URI validUrl = new URI(url);
-            if (validUrl.getHost() != null) {
-                // fully qualified url - let this pass.  client validation should ensure that the host is whitelisted.
-                return true;
-            }
-            return url.startsWith("/");
+            URI validUrl = new URI(path);
+            LOG.trace("Path is valid generic URI {}", validUrl);
+            return path.startsWith("/");
         } catch (URISyntaxException e) {
-            LOG.debug("Invalid srcUrl {}", url, e);
+            LOG.debug("Invalid path {}", path, e);
             return false;
         }
     }
