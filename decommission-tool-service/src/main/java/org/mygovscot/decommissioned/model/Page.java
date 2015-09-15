@@ -3,8 +3,8 @@ package org.mygovscot.decommissioned.model;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
-import org.mygovscot.decommissioned.validation.Path;
 import org.mygovscot.decommissioned.validation.PathOrURL;
+import org.mygovscot.decommissioned.validation.SrcUrl;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
+@SrcUrl(message="Page source should be a valid URL, path or Perl compatible Regexp")
 public class Page {
 
     public enum MatchType {
@@ -37,7 +38,6 @@ public class Page {
     private List<PageSuggestion> pageSuggestions;
 
     @NotNull(message = "Page source must be specified")
-    @Path(message = "Source url must be a valid path")
     private String srcUrl;
 
     @NotNull(message = "Page target must be specified")
