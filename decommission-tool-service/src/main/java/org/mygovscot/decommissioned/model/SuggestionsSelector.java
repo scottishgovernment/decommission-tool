@@ -21,6 +21,8 @@ public class SuggestionsSelector {
 
     private String selector;
 
+    private String attribSelector;
+
     public String getId() {
         return id;
     }
@@ -43,5 +45,13 @@ public class SuggestionsSelector {
 
     public void setSelector(String selector) {
         this.selector = selector;
+    }
+
+    public String getAttribSelector() {
+        return attribSelector;
+    }
+
+    public void setAttribSelector(String attribSelector) {
+        this.attribSelector = attribSelector;
     }
 }

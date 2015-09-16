@@ -2,6 +2,7 @@ package org.mygovscot.decommissioned.suggest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.SuggestionsSelector;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class JsoupSearchPhraseExtractor implements SearchPhraseExtractor {
@@ -20,12 +20,12 @@ public class JsoupSearchPhraseExtractor implements SearchPhraseExtractor {
     private DocumentSource documentSource;
 
     // selectors in order of precedence
-    private String [] defaultSelectors = {"h1", "title"};
+    private SuggestionsSelector [] defaultSelectors = {selector("h1"), selector("title")};
+
 
     public String extract(Page page) throws IOException {
 
-        List<String> selectors = page.getSite().getSuggestionsSelectors().stream()
-                .map(SuggestionsSelector::getSelector).collect(Collectors.toList());
+        List<SuggestionsSelector> selectors = page.getSite().getSuggestionsSelectors();
 
         // use the default selectors if none have been added
         if (selectors.isEmpty()) {
@@ -38,18 +38,32 @@ public class JsoupSearchPhraseExtractor implements SearchPhraseExtractor {
         Document doc = documentSource.getDocument(url);
 
         // iterate over the selectors until we get one with a non empty value
-        for (String selector : selectors) {
-            Elements matchingElements = doc.select(selector);
+        for (SuggestionsSelector selector : selectors) {
+            Elements matchingElements = doc.select(selector.getSelector());
             if (!matchingElements.isEmpty()) {
-                String txt = matchingElements.get(0).text();
+                String txt = getText(matchingElements, selector);
                 if (!StringUtils.isEmpty(txt)) {
                     return txt;
                 }
             }
         }
 
-        // we didnt find anything
+        // we didn't find anything
         return null;
     }
 
+    private SuggestionsSelector selector(String elementSelector) {
+        SuggestionsSelector s = new SuggestionsSelector();
+        s.setSelector(elementSelector);
+        return s;
+    }
+
+    private String getText(Elements elements, SuggestionsSelector selector) {
+        Element el = elements.get(0);
+        if (selector.getAttribSelector() == null) {
+            return el.text();
+        } else {
+            return el.attr(selector.getAttribSelector());
+        }
+    }
 }
