@@ -38,7 +38,7 @@ public class SrcUrlValidator implements ConstraintValidator<SrcUrl, Page> {
             return isValidPerlRegexp(srcUrl);
         }
 
-        throw new IllegalArgumentException("Unknown MatchType:"+page.getType());
+        return true;
 
     }
 
