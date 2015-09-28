@@ -1,30 +1,27 @@
 package org.mygovscot.decommissioned.importer;
 
 
-import junit.framework.Assert;
-import org.aspectj.lang.annotation.Before;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import org.mockito.Mockito;
-import org.mygovscot.beta.config.BetaConfigInitializer;
-import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
 import org.mygovscot.decommissioned.repository.PageRepository;
 import org.mygovscot.decommissioned.repository.SiteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
 
 @ContextConfiguration(classes=ImportServiceTestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -53,8 +50,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("greenPath");
         Page page1 = page(site, "/onegp", "/one-redirect");
         Page page2 = page(site, "/twogp", "/two-redirect");
-        Mockito.verify(pageRepository).save(eq(page1));
-        Mockito.verify(pageRepository).save(eq(page2));
+        verify(pageRepository).save(eq(page1));
+        verify(pageRepository).save(eq(page2));
     }
 
     @Test
@@ -71,8 +68,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("morethanonehost");
         Page page1 = page(site, "/onemulti", "/one-redirect");
         Page page2 = page(site, "/twomulti", "/two-redirect");
-        Mockito.verify(pageRepository).save(eq(page1));
-        Mockito.verify(pageRepository).save(eq(page2));
+        verify(pageRepository).save(eq(page1));
+        verify(pageRepository).save(eq(page2));
     }
 
     @Test
@@ -90,8 +87,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("emptyTarget");
         Page page1 = page(site, "/oneemp", "/");
         Page page2 = page(site, "/twoemp", "/two-redirect");
-        Mockito.verify(pageRepository).save(eq(page1));
-        Mockito.verify(pageRepository).save(eq(page2));
+        verify(pageRepository).save(eq(page1));
+        verify(pageRepository).save(eq(page2));
     }
 
     @Test
@@ -106,7 +103,7 @@ public class ImportServiceTest {
         // ASSERT
         Site site = siteRepository.findOne("withparams");
         Page page1 = page(site, "/withparams", "/");
-        Mockito.verify(pageRepository).save(eq(page1));
+        verify(pageRepository).save(eq(page1));
     }
 
     @Test
@@ -123,8 +120,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("emptyTarget");
         Page page1 = page(site, "/one", "/");
         Page page2 = page(site, "/two", "/two-redirect");
-        Mockito.verify(pageRepository).save(eq(page1));
-        Mockito.verify(pageRepository).save(eq(page2));
+        verify(pageRepository).save(eq(page1));
+        verify(pageRepository).save(eq(page2));
     }
 
     @Test
@@ -141,8 +138,8 @@ public class ImportServiceTest {
         Site site = siteRepository.findOne("greenPathWithHost");
         Page page1 = page(site, "/one", "/one-redirect");
         Page page2 = page(site, "/two", "/two-redirect");
-        Mockito.verify(pageRepository).save(eq(page1));
-        Mockito.verify(pageRepository).save(eq(page2));
+        verify(pageRepository).save(eq(page1));
+        verify(pageRepository).save(eq(page2));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -221,8 +218,8 @@ public class ImportServiceTest {
         sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        Mockito.verify(pageRepository, Mockito.never()).save(eq(page(null, "/one", "/one-redirect")));
-        Mockito.verify(pageRepository, Mockito.never()).save(eq(page(null, "/two", "/two-redirect")));
+        verify(pageRepository, never()).save(eq(page(null, "/one", "/one-redirect")));
+        verify(pageRepository, never()).save(eq(page(null, "/two", "/two-redirect")));
     }
 
     @Test
@@ -236,8 +233,8 @@ public class ImportServiceTest {
         sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        Mockito.verify(pageRepository).save(eq(page(site, "/one%20", "/one-redirect")));
-        Mockito.verify(pageRepository).save(eq(page(site, "/two%20three", "/two-redirect")));
+        verify(pageRepository).save(eq(page(site, "/one%20", "/one-redirect")));
+        verify(pageRepository).save(eq(page(site, "/two%20three", "/two-redirect")));
     }
 
     @Test
@@ -247,11 +244,10 @@ public class ImportServiceTest {
         Set<ImportTypeResult> set = new HashSet<>();
         set.add(one);
 
-        Assert.assertTrue(set.contains(two));
-        Assert.assertTrue(one.equals(one));
-        Assert.assertTrue(one.equals(two));
-        Assert.assertFalse(one.equals(one.toString()));
-        ;
+        assertTrue(set.contains(two));
+        assertTrue(one.equals(one));
+        assertTrue(one.equals(two));
+        assertFalse(one.equals(one.toString()));
     }
 
     @Test
@@ -261,10 +257,10 @@ public class ImportServiceTest {
         Set<ImportRecordResult> set = new HashSet<>();
         set.add(one);
 
-        Assert.assertTrue(set.contains(two));
-        Assert.assertTrue(one.equals(one));
-        Assert.assertTrue(one.equals(two));
-        Assert.assertFalse(one.equals(one.toString()));
+        assertTrue(set.contains(two));
+        assertTrue(one.equals(one));
+        assertTrue(one.equals(two));
+        assertFalse(one.equals(one.toString()));
     }
 
     @Test
@@ -275,9 +271,9 @@ public class ImportServiceTest {
         Set<ImportResult> set = new HashSet<>();
         set.add(one);
 
-        Assert.assertTrue(set.contains(two));
-        Assert.assertTrue(one.equals(one));
-        Assert.assertTrue(one.equals(two));
-        Assert.assertFalse(one.equals(one.toString()));
+        assertTrue(set.contains(two));
+        assertTrue(one.equals(one));
+        assertTrue(one.equals(two));
+        assertFalse(one.equals(one.toString()));
     }
 }
