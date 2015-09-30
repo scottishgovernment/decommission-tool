@@ -2,10 +2,10 @@ package org.mygovscot.decommissioned.config;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mygovscot.authentication.client.AuthenticationClient;
-import org.mygovscot.basic.authentication.web.resource.representation.RoleResource;
-import org.mygovscot.basic.authentication.web.resource.representation.SessionResource;
-import org.mygovscot.basic.authentication.web.resource.representation.UserResource;
+import scot.mygov.authentication.client.AuthenticationClient;
+import scot.mygov.authentication.api.RoleResource;
+import scot.mygov.authentication.api.SessionResource;
+import scot.mygov.authentication.api.UserResource;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;

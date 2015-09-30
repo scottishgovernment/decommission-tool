@@ -1,6 +1,6 @@
 package org.mygovscot.decommissioned.config;
 
-import org.mygovscot.authentication.client.CorsFilter;
+import scot.mygov.authentication.client.CorsFilter;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

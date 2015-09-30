@@ -1,7 +1,7 @@
 package org.mygovscot.decommissioned.config;
 
-import org.mygovscot.authentication.client.AuthenticationContext;
-import org.mygovscot.basic.authentication.web.resource.representation.UserResource;
+import scot.mygov.authentication.client.AuthenticationContext;
+import scot.mygov.authentication.api.UserResource;
 import org.springframework.stereotype.Component;
 import scot.mygov.authentication.spring.SpringAuthenticationFilter;
 
