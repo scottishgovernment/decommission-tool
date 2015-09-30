@@ -6,11 +6,11 @@
     <parent>
         <groupId>org.mygovscot.decommission-tool</groupId>
         <artifactId>decommission-tool</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.59</version>
     </parent>
 
     <artifactId>decommission-tool-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.59</version>
 
     <name>Decommissioning Tool REST Service</name>
 
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>org.mygovscot.beta</groupId>
             <artifactId>beta-config</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.12</version>
         </dependency>
 
         <dependency>
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.mygovscot.utils</groupId>
             <artifactId>mygovscot_util_servlet</artifactId>
-            <version>1.0.5-SNAPSHOT</version>
+            <version>1.0.110</version>
         </dependency>        
 
         <dependency>
