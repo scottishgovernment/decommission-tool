@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-       <parent>
+    <parent>
         <groupId>scot.mygov</groupId>
         <artifactId>mygov-parent</artifactId>
         <version>3</version>
@@ -21,6 +21,18 @@
         <module>decommission-tool-service</module>
         <module>decommission-tool-deb</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>4.0.2.RELEASE</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
