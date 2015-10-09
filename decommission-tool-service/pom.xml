@@ -19,6 +19,7 @@
         <spring-data-jpa.version>1.6.2.RELEASE</spring-data-jpa.version>
         <spring-data-rest-webmvc.version>2.2.2.RELEASE</spring-data-rest-webmvc.version>
         <spring.version>4.1.6.RELEASE</spring.version>
+        <sonar.exclusions>**/SecurityConfig.java</sonar.exclusions>
     </properties>
 
     <dependencies>
@@ -70,6 +71,7 @@
             <artifactId>flyway-core</artifactId>
             <version>3.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
@@ -81,16 +83,19 @@
             <artifactId>postgresql</artifactId>
             <version>9.4-1201-jdbc41</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.3.2</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>1.1</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -125,16 +130,10 @@
         </dependency>
 
         <dependency>
-            <groupId>com.jayway.restassured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>2.4.0</version>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.0.0</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
     </dependencies>
