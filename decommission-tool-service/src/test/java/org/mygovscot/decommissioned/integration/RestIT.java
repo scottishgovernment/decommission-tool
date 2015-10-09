@@ -1,7 +1,7 @@
 package org.mygovscot.decommissioned.integration;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,31 +14,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static com.jayway.restassured.RestAssured.get;
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.parsing.Parser.JSON;
-import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
-import static org.apache.http.HttpStatus.SC_CREATED;
-import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {DecommissionToolApp.class})
 @WebAppConfiguration
-@IntegrationTest("server.port:0")
+@IntegrationTest("server.port=0")
 public class RestIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestIT.class);
 
-    @Value("${local.server.port}")
-    private int port;
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     SiteRepository siteRepository;
@@ -46,17 +45,20 @@ public class RestIT {
     @Autowired
     PageRepository pageRepository;
 
+    @Autowired
+    WebApplicationContext context;
+
+    MockMvc mvc;
+
     @Before
     public void setUp() {
-        RestAssured.port = port;
-
+        mvc = webAppContextSetup(context).build();
         siteRepository.deleteAll();
-
         pageRepository.deleteAll();
     }
 
     @Test
-    public void testCreateSite() {
+    public void testCreateSite() throws Exception {
         Site site = new Site();
         site.setHost("www.host1.com");
         site.setName("name1");
@@ -65,53 +67,64 @@ public class RestIT {
         assertEquals(0, siteRepository.findAll().size());
 
         // Check that no documents are returned via rest api
-        get("/redirects/sites").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
+        mvc.perform(get("/redirects/sites").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("page.totalElements").value(0));
 
-        // Post site object as json to create a new document
-        given().contentType(ContentType.JSON).body(site).post("/redirects/sites").then().statusCode(SC_CREATED);
+        mvc.perform(post("/redirects/sites")
+                .content(mapper.writeValueAsString(site)))
+                .andExpect(status().isCreated());
 
-        // Check that there is one and only one document in the database
+        mvc.perform(get("/redirects/sites").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("page.totalElements").value(1));
         assertEquals(1, siteRepository.findAll().size());
-
-        // Check that the list of documents returned through the rest api is the newly created entry.
-        get("/redirects/sites").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(1));
     }
 
     @Test
-    public void testCreateSiteFail() {
+    public void testCreateSiteFail() throws Exception {
         Site site = new Site();
         site.setName("name1");
 
         // Can't save site because it does not have a host
-        given().contentType(ContentType.JSON).body(site).post("/redirects/sites").then().statusCode(SC_BAD_REQUEST);
+        mvc.perform(post("/redirects/sites")
+                .content(mapper.writeValueAsString(site)))
+                .andExpect(status().isBadRequest());
 
         // Save one site
         site.setHost("www.host1.com");
-        given().contentType(ContentType.JSON).body(site).post("/redirects/sites").then().statusCode(SC_CREATED);
+        mvc.perform(post("/redirects/sites")
+                .content(mapper.writeValueAsString(site)))
+                .andExpect(status().isCreated());
 
         // Check that there is one and only one document in the database
         assertEquals(1, siteRepository.findAll().size());
 
         // Post again but check duplicate host constraint stops it from saving
-//        given().contentType(ContentType.JSON).body(site).post("/sites").then().statusCode(HttpStatus.SC_BAD_REQUEST);
+        mvc.perform(post("/redirects/sites")
+                .content(mapper.writeValueAsString(site)))
+                .andExpect(status().is4xxClientError());
 
         // Still only 1 site in the database
         assertEquals(1, siteRepository.findAll().size());
     }
 
     @Test
-    public void testCreateSiteInvalidHostname() {
+    public void testCreateSiteInvalidHostname() throws Exception {
         Site site = new Site();
         site.setName("name1");
         site.setHost("#www.host1.com///");
 
-        given().contentType(ContentType.JSON).body(site).post("/redirects/sites").then().statusCode(SC_BAD_REQUEST);
+        // Can't save site because it does not have a host
+        mvc.perform(post("/redirects/sites")
+                .content(mapper.writeValueAsString(site)))
+                .andExpect(status().isBadRequest());
 
         assertEquals(0, siteRepository.findAll().size());
     }
 
     @Test
-    public void testCreatePage() {
+    public void testCreatePage() throws Exception {
         Site site = new Site();
         site.setHost("www.host1.com");
         site.setName("name1");
@@ -128,24 +141,31 @@ public class RestIT {
         assertEquals(0, pageRepository.findAll().size());
 
         // Check that no documents are returned via rest api
-        get("/redirects/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
+        mvc.perform(get("/redirects/pages").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("page.totalElements").value(0));
 
         // Post page object as json to create a new document
-        given().contentType(ContentType.JSON).body(toHAL(page)).post("/redirects/pages").then().statusCode(SC_CREATED);
+        mvc.perform(post("/redirects/pages").accept(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(toHAL(page))))
+                .andExpect(status().isCreated());
 
         // Check that there is one and only one document in the database
         assertEquals(1, pageRepository.findAll().size());
 
         // Check that the list of documents returned through the rest api is the newly created entry.
-        get("/redirects/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(1));
+        mvc.perform(get("/redirects/pages").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("page.totalElements").value(1));
 
-        String siteUrl = get("/redirects/sites/" + site.getId()).then().extract().path("_links.self.href");
-        get(siteUrl + "/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("_embedded.pages[0].srcUrl", equalTo(page.getSrcUrl()));
-
+        String siteUrl = getSiteUrl(site);
+        mvc.perform(get(siteUrl + "/pages").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("_embedded.pages[0].srcUrl").value(page.getSrcUrl()));
     }
 
     @Test
-    public void testCreateInvalidPage() {
+    public void testCreateInvalidPage() throws Exception {
         Site site = new Site();
         site.setHost("www.host1.com");
         site.setName("name1");
@@ -161,24 +181,34 @@ public class RestIT {
         assertEquals(0, pageRepository.findAll().size());
 
         // Check that no documents are returned via rest api
-        get("/redirects/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
+        mvc.perform(get("/redirects/pages").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("page.totalElements").value(0));
 
         // Post page object as json to create a new document
-        given().contentType(ContentType.JSON).body(toHAL(page)).post("/redirects/pages").then().statusCode(SC_BAD_REQUEST);
+        mvc.perform(post("/redirects/pages").accept(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(toHAL(page))))
+                .andExpect(status().isBadRequest());
 
         // Check that the document was not saved to db
         assertEquals(0, pageRepository.findAll().size());
 
         // Check that the list of documents returned through the rest api is still empty.
-        get("/redirects/pages").then().statusCode(SC_OK).and().using().defaultParser(JSON).assertThat().body("page.totalElements", equalTo(0));
-
+        mvc.perform(get("/redirects/pages").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("page.totalElements").value(0));
     }
 
-    private String getSiteUrl(Site site) {
-        return get("/redirects/sites/" + site.getId()).then().extract().path("_links.self.href");
+    private String getSiteUrl(Site site) throws Exception {
+        String json = mvc.perform(get("/redirects/sites/" + site.getId()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        return JsonPath.parse(json).read("_links.self.href");
     }
 
-    private PathRepresentation toHAL(Page page) {
+    private PathRepresentation toHAL(Page page) throws Exception {
         String siteUrl = getSiteUrl(page.getSite());
         LOG.debug("Base sites url = {}", siteUrl);
         return new PathRepresentation(page, siteUrl);
