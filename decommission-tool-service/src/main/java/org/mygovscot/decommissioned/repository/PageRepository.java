@@ -24,6 +24,11 @@ public interface PageRepository extends JpaRepository<Page, String> {
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Modifying
+    @Query("delete from Page where id = :id and locked = false")
+    void delete(@Param("id")String id);
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Modifying
     @Query("delete from Page where id in (:ids) and locked = false")
     void bulkDelete(@Param("ids") List<String> ids);
 
