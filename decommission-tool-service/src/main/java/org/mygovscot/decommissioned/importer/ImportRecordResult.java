@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class ImportRecordResult {
 
     public enum Type {
-        SUCCESS, NOCHANGE, ERROR
+        SUCCESS, NOCHANGE, ERROR, DUPLICATE
     }
 
     private Type type;

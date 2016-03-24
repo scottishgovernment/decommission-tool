@@ -21,11 +21,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -65,15 +61,11 @@ public class ImportService {
             Map<String, Page> seenPagesBySrcUrl = pageRepository.findBySiteIdAndSrcUrlIn(site.getId(), srcUrls)
                     .stream()
                     .collect(Collectors.toMap(p -> p.getSrcUrl(), Function.identity()));
+            Map<String, Page> seenPagesBySrcUrlThisImport = new HashMap<>();
 
-            // group the records in the csv by their srcUrl
-            Map<String, List<CSVRecord>> srcToRecord = records.stream().collect(Collectors.groupingBy(t -> t.get(0)));
-
-            // process each record
-            for ( Map.Entry<String, List<CSVRecord>> entry : srcToRecord.entrySet()) {
-                CSVRecord record = entry.getValue().get(entry.getValue().size() - 1);
-                results.add(processRecord(site, record, seenPagesBySrcUrl));
-            }
+            results = records.stream()
+                    .map(t -> processRecord(site, t, seenPagesBySrcUrl, seenPagesBySrcUrlThisImport))
+                    .collect(Collectors.toList());
 
             return new ImportResult(results);
         } catch (IOException ioe) {
@@ -85,7 +77,7 @@ public class ImportService {
         return record.size() == 1 || record.size() == 2;
     }
 
-    private ImportRecordResult processRecord(Site site, CSVRecord record, Map<String, Page> seenPagesBySrcUrl) {
+    private ImportRecordResult processRecord(Site site, CSVRecord record, Map<String, Page> seenPagesBySrcUrl, Map<String, Page> seenPagesBySrcUrlThisRun) {
 
         if (!acceptableRecordSize(record)) {
             return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Wrong Number of Fields", record.getRecordNumber());
@@ -100,6 +92,12 @@ public class ImportService {
             return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid srcUrl", record.getRecordNumber());
         }
 
+        // have we seen it in this csv file already?
+        if (seenPagesBySrcUrlThisRun.get(srcUrl) != null) {
+            return new ImportRecordResult(ImportRecordResult.Type.DUPLICATE,
+                    "srcUrl appears more than once in this file", record.getRecordNumber());
+        }
+
         // default the target url to "/" and only override it if it is not empty
         String targetUrl = "/";
         try {
@@ -109,13 +107,17 @@ public class ImportService {
             return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid targetUrl", record.getRecordNumber());
         }
 
-        // see if this is already in the db or not
-        Page page = seenPagesBySrcUrl.get(srcUrl);
+        return process(srcUrl, targetUrl, site, record, seenPagesBySrcUrl, seenPagesBySrcUrlThisRun);
 
-        if (page == null) {
-            page = new Page();
-        } else {
+    }
+
+    private ImportRecordResult process(String srcUrl, String targetUrl, Site site, CSVRecord record,
+                                       Map<String, Page> seenPagesBySrcUrl, Map<String, Page> seenPagesBySrcUrlThisRun) {
+        // see if this is already in the db or not
+        Page page = page(srcUrl, seenPagesBySrcUrl);
+        if (page != null) {
             ImportRecordResult unchangedResult = detectNoChangeOrLocked(targetUrl, record, page);
+            seenPagesBySrcUrlThisRun.put(srcUrl, page);
             if (unchangedResult != null) {
                 return unchangedResult;
             }
@@ -128,10 +130,20 @@ public class ImportService {
         page.setType(Page.MatchType.EXACT);
         LOG.debug("page: {} -> {}", page.getSrcUrl(), page.getTargetUrl());
 
+        seenPagesBySrcUrlThisRun.put(srcUrl, page);
+
         pageRepository.save(page);
 
-        return new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "OK", record.getRecordNumber());
+        return new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", record.getRecordNumber());
+    }
 
+    private Page page(String srcUrl, Map<String, Page> seenPagesBySrcUrl) {
+        Page page = seenPagesBySrcUrl.get(srcUrl);
+
+        if (page == null) {
+            page = new Page();
+        }
+        return page;
     }
 
     private ImportRecordResult detectNoChangeOrLocked(String targetUrl, CSVRecord record, Page page) {
