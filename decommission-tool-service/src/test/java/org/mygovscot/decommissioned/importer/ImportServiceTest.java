@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -235,6 +233,24 @@ public class ImportServiceTest {
         // ASSERT
         verify(pageRepository).save(eq(page(site, "/one%20", "/one-redirect")));
         verify(pageRepository).save(eq(page(site, "/two%20three", "/two-redirect")));
+    }
+
+    @Test
+    public void duplicateSrcURIRecorded() {
+
+        // ARRANGE
+        String csv = "/one,/to\n"
+                + "/one,/to";
+        List<ImportRecordResult> results = new ArrayList<>();
+        results.add(new ImportRecordResult(ImportRecordResult.Type.DUPLICATE, "srcUrl appears more than once in this file", 2));
+        results.add(new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", 1));
+        ImportResult expected = new ImportResult(results);
+
+        // ACT
+        ImportResult actual = sut.importRedirects("invalidURI", csv);
+
+        // ASSERT
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
