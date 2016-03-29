@@ -20,7 +20,7 @@ public interface PageRepository extends JpaRepository<Page, String> {
 
     Page findOneBySiteIdAndSrcUrl(String siteId, String srcUrl);
 
-    List<Page> findBySiteIdAndSrcUrlIn(String siteId, List<String> srcUrl);
+    List<Page> findBySiteId(String siteId);
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Modifying

@@ -23,7 +23,9 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Component
 public class ImportService {
@@ -52,20 +54,17 @@ public class ImportService {
 
             // parse the csv and remove duplicates
             CSVParser parser = new CSVParser(new InputStreamReader(is, StandardCharsets.UTF_8), CSVFormat.newFormat(','));
-            List<CSVRecord> records = parser.getRecords().stream().distinct(). collect(Collectors.toList());
-
-            // get a list of all src urls mentioned
-            List<String> srcUrls = records.stream().map(t -> t.get(0)).collect(Collectors.toList());
+            List<CSVRecord> records = parser.getRecords().stream().distinct(). collect(toList());
 
             // fetch all pages that are mentioned in one gulp and map them by their src url
-            Map<String, Page> seenPagesBySrcUrl = pageRepository.findBySiteIdAndSrcUrlIn(site.getId(), srcUrls)
+            Map<String, Page> seenPagesBySrcUrl = pageRepository.findBySiteId(site.getId())
                     .stream()
-                    .collect(Collectors.toMap(p -> p.getSrcUrl(), Function.identity()));
+                    .collect(toMap(p -> p.getSrcUrl(), Function.identity()));
             Map<String, Page> seenPagesBySrcUrlThisImport = new HashMap<>();
 
             results = records.stream()
                     .map(t -> processRecord(site, t, seenPagesBySrcUrl, seenPagesBySrcUrlThisImport))
-                    .collect(Collectors.toList());
+                    .collect(toList());
 
             return new ImportResult(results);
         } catch (IOException ioe) {
@@ -184,7 +183,7 @@ public class ImportService {
 
         // ensure host is acceptable (either the site host or a white listed one)
         Set<String> acceptableHosts = whitelistedHostRepository.findAll()
-                .stream().map(t -> t.getHost()).collect(Collectors.toSet());
+                .stream().map(t -> t.getHost()).collect(toSet());
         acceptableHosts.add(site.getHost());
 
         if (!acceptableHosts.contains(uri.getHost())) {
@@ -195,7 +194,7 @@ public class ImportService {
     }
 
     private Set<String> getHosts(Site site) {
-        return Arrays.stream(site.getHost().split(" ")).collect(Collectors.toSet());
+        return Arrays.stream(site.getHost().split(" ")).collect(toSet());
     }
 
     private String srcUrl(CSVRecord record, Site site) throws URISyntaxException {
