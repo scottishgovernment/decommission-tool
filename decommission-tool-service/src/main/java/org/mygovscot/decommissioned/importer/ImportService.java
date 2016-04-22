@@ -73,7 +73,7 @@ public class ImportService {
     }
 
     private boolean acceptableRecordSize(CSVRecord record) {
-        return record.size() >= 1 || record.size() <= 3;
+        return record.size() >= 1 && record.size() <= 3;
     }
 
     private ImportRecordResult processRecord(Site site, CSVRecord record, Map<String, Page> seenPagesBySrcUrl, Map<String, Page> seenPagesBySrcUrlThisRun) {

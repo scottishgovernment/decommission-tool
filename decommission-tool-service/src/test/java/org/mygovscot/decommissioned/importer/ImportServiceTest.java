@@ -193,7 +193,7 @@ public class ImportServiceTest {
     @Test
     public void tooManyRecords() {
         // ARRANGE
-        String csv = "/one, /one-redirect,what am I?";
+        String csv = "/one, /one-redirect,PERMANENT,what am I?";
         ImportResult expected = new ImportResult(
                 Collections.singletonList(new ImportRecordResult(ImportRecordResult.Type.ERROR, "Wrong Number of Fields", 1)));
 

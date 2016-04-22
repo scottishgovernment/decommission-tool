@@ -62,6 +62,7 @@ public class ImportServiceTestConfig {
         p.setSrcUrl(srcUrl);
         p.setTargetUrl(targetUrl);
         p.setType(Page.MatchType.EXACT);
+        p.setRedirectType(Page.RedirectType.PERMANENT);
         return p;
     }
 
