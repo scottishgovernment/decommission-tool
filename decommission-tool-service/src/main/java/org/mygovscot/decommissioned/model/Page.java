@@ -25,6 +25,12 @@ public class Page {
         EXACT, PCRE_REGEXP
     }
 
+    public enum RedirectType {
+        REDIRECT, PERMANENT
+
+
+    }
+
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
@@ -48,6 +54,9 @@ public class Page {
 
     @Enumerated(EnumType.STRING)
     private MatchType type;
+
+    @Enumerated(EnumType.STRING)
+    private RedirectType redirectType;
 
     public String getId() {
         return id;
@@ -105,6 +114,14 @@ public class Page {
         this.type = type;
     }
 
+    public RedirectType getRedirectType() {
+        return redirectType;
+    }
+
+    public void setRedirectType(RedirectType redirectType) {
+        this.redirectType = redirectType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -125,6 +142,7 @@ public class Page {
                 .append(srcUrl, page.srcUrl)
                 .append(targetUrl, page.targetUrl)
                 .append(type, page.type)
+                .append(redirectType, page.redirectType)
                 .isEquals();
     }
 
@@ -138,6 +156,7 @@ public class Page {
                 .append(targetUrl)
                 .append(locked)
                 .append(type)
+                .append(redirectType)
                 .toHashCode();
     }
 
@@ -151,6 +170,7 @@ public class Page {
                 ", targetUrl='" + targetUrl + '\'' +
                 ", locked=" + locked +
                 ", type=" + type +
+                ", redirectType=" + redirectType +
                 '}';
     }
 }
