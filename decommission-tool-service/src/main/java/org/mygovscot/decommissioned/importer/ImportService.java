@@ -73,7 +73,7 @@ public class ImportService {
     }
 
     private boolean acceptableRecordSize(CSVRecord record) {
-        return record.size() == 1 || record.size() == 2;
+        return record.size() >= 1 || record.size() <= 3;
     }
 
     private ImportRecordResult processRecord(Site site, CSVRecord record, Map<String, Page> seenPagesBySrcUrl, Map<String, Page> seenPagesBySrcUrlThisRun) {
@@ -106,20 +106,31 @@ public class ImportService {
             return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid targetUrl", record.getRecordNumber());
         }
 
-        return process(srcUrl, targetUrl, site, record, seenPagesBySrcUrl, seenPagesBySrcUrlThisRun);
+        Page.RedirectType redirectType;
+        try {
+            redirectType = redirectType(record);
+        } catch(IllegalArgumentException e) {
+            LOG.info("Invalid redirect type", e);
+            return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid redirect type", record.getRecordNumber());
+        }
+
+        return process(srcUrl, targetUrl, site, record, seenPagesBySrcUrl, seenPagesBySrcUrlThisRun, redirectType);
 
     }
 
     private ImportRecordResult process(String srcUrl, String targetUrl, Site site, CSVRecord record,
-                                       Map<String, Page> seenPagesBySrcUrl, Map<String, Page> seenPagesBySrcUrlThisRun) {
+                                       Map<String, Page> seenPagesBySrcUrl, Map<String, Page> seenPagesBySrcUrlThisRun,
+                                       Page.RedirectType redirectType) {
         // see if this is already in the db or not
-        Page page = page(srcUrl, seenPagesBySrcUrl);
+        Page page = seenPagesBySrcUrl.get(srcUrl);
         if (page != null) {
             ImportRecordResult unchangedResult = detectNoChangeOrLocked(targetUrl, record, page);
             seenPagesBySrcUrlThisRun.put(srcUrl, page);
             if (unchangedResult != null) {
                 return unchangedResult;
             }
+        } else {
+            page = new Page();
         }
 
         // if the page was not present then create a new one
@@ -127,22 +138,14 @@ public class ImportService {
         page.setSrcUrl(srcUrl);
         page.setTargetUrl(targetUrl);
         page.setType(Page.MatchType.EXACT);
-        LOG.debug("page: {} -> {}", page.getSrcUrl(), page.getTargetUrl());
+        page.setRedirectType(redirectType);
+        LOG.debug("page: {} -> {} {}", page.getSrcUrl(), page.getTargetUrl(), redirectType.toString());
 
         seenPagesBySrcUrlThisRun.put(srcUrl, page);
 
         pageRepository.save(page);
 
         return new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", record.getRecordNumber());
-    }
-
-    private Page page(String srcUrl, Map<String, Page> seenPagesBySrcUrl) {
-        Page page = seenPagesBySrcUrl.get(srcUrl);
-
-        if (page == null) {
-            page = new Page();
-        }
-        return page;
     }
 
     private ImportRecordResult detectNoChangeOrLocked(String targetUrl, CSVRecord record, Page page) {
@@ -229,5 +232,24 @@ public class ImportService {
             throw new IllegalArgumentException("Path does not start with /");
         }
         return path;
+    }
+
+    private Page.RedirectType redirectType(CSVRecord record) {
+        //If there is no redirect type specified default to a PERMANENT redirect.
+        if(record.size() < 3) {
+            return Page.RedirectType.PERMANENT;
+        }
+
+        //See if the second record matches REDIRECT or PERMANENT
+        String raw = record.get(2).trim();
+        if(raw.equalsIgnoreCase(Page.RedirectType.REDIRECT.toString())) {
+            return Page.RedirectType.REDIRECT;
+        } else if(raw.equalsIgnoreCase(Page.RedirectType.PERMANENT.toString())) {
+            return Page.RedirectType.PERMANENT;
+        } else if(raw.isEmpty()) {
+            return Page.RedirectType.PERMANENT;
+        } else {
+            throw new IllegalArgumentException("Redirect type does not match REDIRECT or PERMANENT");
+        }
     }
 }
