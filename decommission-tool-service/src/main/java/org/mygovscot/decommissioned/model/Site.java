@@ -33,6 +33,8 @@ public class Site {
 
     private boolean httpsSupported;
 
+    private String catchAllUri;
+
     @OneToMany(mappedBy = "site", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Page> pages;
 
@@ -79,6 +81,14 @@ public class Site {
         this.httpsSupported = httpsSupported;
     }
 
+    public String getCatchAllUri() {
+        return catchAllUri;
+    }
+
+    public void setCatchAllUri(String catchAllUri) {
+        this.catchAllUri = catchAllUri;
+    }
+
     public List<Page> getPages() {
         return pages;
     }
@@ -114,6 +124,7 @@ public class Site {
                 .append(name, site.name)
                 .append(description, site.description)
                 .append(pages, site.pages)
+                .append(catchAllUri, site.catchAllUri)
                 .isEquals();
     }
 
@@ -126,6 +137,7 @@ public class Site {
                 .append(description)
                 .append(httpsSupported)
                 .append(pages)
+                .append(catchAllUri)
                 .toHashCode();
     }
 }

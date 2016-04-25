@@ -1,0 +1,1 @@
+ALTER TABLE site ADD COLUMN catch_all_uri varchar default '/';
