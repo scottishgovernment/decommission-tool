@@ -241,8 +241,12 @@ public class ImportService {
         }
 
         //See if the second record matches REDIRECT or PERMANENT
+        //Note that it was requested to change REDIRECT to TEMPORARY
+        //I have left both in,
         String raw = record.get(2).trim();
-        if(raw.equalsIgnoreCase(Page.RedirectType.REDIRECT.toString())) {
+        if(raw.equalsIgnoreCase("TEMPORARY")) {
+            return Page.RedirectType.REDIRECT;
+        } else if(raw.equalsIgnoreCase(Page.RedirectType.REDIRECT.toString())) {
             return Page.RedirectType.REDIRECT;
         } else if(raw.equalsIgnoreCase(Page.RedirectType.PERMANENT.toString())) {
             return Page.RedirectType.PERMANENT;
