@@ -253,7 +253,7 @@ public class ImportService {
         } else if(raw.isEmpty()) {
             return Page.RedirectType.PERMANENT;
         } else {
-            throw new IllegalArgumentException("Redirect type does not match REDIRECT or PERMANENT");
+            throw new IllegalArgumentException("Redirect type does not match TEMPORARY or PERMANENT");
         }
     }
 }
