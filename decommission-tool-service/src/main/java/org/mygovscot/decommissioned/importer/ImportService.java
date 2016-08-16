@@ -86,7 +86,7 @@ public class ImportService {
         String srcUrl = "";
         try {
             srcUrl = srcUrl(record, site);
-        } catch (URISyntaxException | IllegalArgumentException e) {
+        } catch (Exception e) {
             LOG.info("Invalid src URI", e);
             return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid srcUrl", record.getRecordNumber());
         }
