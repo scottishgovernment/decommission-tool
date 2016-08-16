@@ -27,8 +27,6 @@ public class Page {
 
     public enum RedirectType {
         REDIRECT, PERMANENT
-
-
     }
 
     @Id

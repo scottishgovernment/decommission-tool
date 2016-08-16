@@ -55,14 +55,17 @@ public class ImportServiceTestConfig {
         return new ImportService();
     }
 
-
     static Page page(Site site, String srcUrl, String targetUrl) {
+        return page(site, srcUrl, targetUrl, Page.RedirectType.PERMANENT);
+    }
+
+    static Page page(Site site, String srcUrl, String targetUrl, Page.RedirectType redirectType) {
         Page p = new Page();
         p.setSite(site);
         p.setSrcUrl(srcUrl);
         p.setTargetUrl(targetUrl);
         p.setType(Page.MatchType.EXACT);
-        p.setRedirectType(Page.RedirectType.PERMANENT);
+        p.setRedirectType(redirectType);
         return p;
     }
 

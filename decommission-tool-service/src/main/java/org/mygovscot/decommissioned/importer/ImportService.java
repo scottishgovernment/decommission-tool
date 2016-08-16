@@ -235,25 +235,19 @@ public class ImportService {
     }
 
     private Page.RedirectType redirectType(CSVRecord record) {
+
         //If there is no redirect type specified default to a PERMANENT redirect.
         if(record.size() < 3) {
             return Page.RedirectType.PERMANENT;
         }
 
-        //See if the second record matches REDIRECT or PERMANENT
-        //Note that it was requested to change REDIRECT to TEMPORARY
-        //I have left both in,
-        String raw = record.get(2).trim();
-        if(raw.equalsIgnoreCase("TEMPORARY")) {
+        String raw = record.get(2).trim().toUpperCase();
+
+        // "TEMPORARY" should be interpreted as REDIRECT
+        if("TEMPORARY".equals(raw)) {
             return Page.RedirectType.REDIRECT;
-        } else if(raw.equalsIgnoreCase(Page.RedirectType.REDIRECT.toString())) {
-            return Page.RedirectType.REDIRECT;
-        } else if(raw.equalsIgnoreCase(Page.RedirectType.PERMANENT.toString())) {
-            return Page.RedirectType.PERMANENT;
-        } else if(raw.isEmpty()) {
-            return Page.RedirectType.PERMANENT;
-        } else {
-            throw new IllegalArgumentException("Redirect type does not match TEMPORARY or PERMANENT");
         }
+
+        return Page.RedirectType.valueOf(raw);
     }
 }
