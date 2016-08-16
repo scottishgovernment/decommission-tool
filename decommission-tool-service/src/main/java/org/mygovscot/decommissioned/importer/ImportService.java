@@ -63,8 +63,12 @@ public class ImportService {
             Map<String, Page> seenPagesBySrcUrlThisImport = new HashMap<>();
 
             results = records.stream()
-                    .map(t -> processRecord(site, t, seenPagesBySrcUrl, seenPagesBySrcUrlThisImport))
-                    .collect(toList());
+                    .map(record -> {
+                        if (acceptableRecordSize(record)) {
+                            return processRecord(site, record, seenPagesBySrcUrl, seenPagesBySrcUrlThisImport);
+                        }
+                        return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Wrong Number of Fields", record.getRecordNumber());
+                    }).collect(toList());
 
             return new ImportResult(results);
         } catch (IOException ioe) {
@@ -77,10 +81,6 @@ public class ImportService {
     }
 
     private ImportRecordResult processRecord(Site site, CSVRecord record, Map<String, Page> seenPagesBySrcUrl, Map<String, Page> seenPagesBySrcUrlThisRun) {
-
-        if (!acceptableRecordSize(record)) {
-            return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Wrong Number of Fields", record.getRecordNumber());
-        }
 
         // trim and tidy the urls
         String srcUrl = "";
@@ -101,7 +101,7 @@ public class ImportService {
         String targetUrl = "/";
         try {
             targetUrl = targetUrl(record, site);
-        } catch (URISyntaxException | IllegalArgumentException e) {
+        } catch (Exception e) {
             LOG.info("Invalid target URI", e);
             return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid targetUrl", record.getRecordNumber());
         }
