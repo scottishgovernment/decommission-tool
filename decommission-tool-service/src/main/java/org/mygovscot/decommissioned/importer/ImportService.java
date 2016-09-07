@@ -1,5 +1,24 @@
 package org.mygovscot.decommissioned.importer;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -13,19 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.function.Function;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 @Component
 public class ImportService {
@@ -53,7 +59,7 @@ public class ImportService {
             List<ImportRecordResult> results = new ArrayList<>();
 
             // parse the csv and remove duplicates
-            CSVParser parser = new CSVParser(new InputStreamReader(is, StandardCharsets.UTF_8), CSVFormat.newFormat(','));
+            CSVParser parser = new CSVParser(new InputStreamReader(is, StandardCharsets.UTF_8), CSVFormat.EXCEL);
             List<CSVRecord> records = parser.getRecords().stream().distinct(). collect(toList());
 
             // fetch all pages that are mentioned in one gulp and map them by their src url
@@ -77,7 +83,7 @@ public class ImportService {
     }
 
     private boolean acceptableRecordSize(CSVRecord record) {
-        return record.size() >= 1 && record.size() <= 3;
+        return record.size() >= 1 && record.size() <= 4;
     }
 
     private ImportRecordResult processRecord(Site site, CSVRecord record, Map<String, Page> seenPagesBySrcUrl, Map<String, Page> seenPagesBySrcUrlThisRun) {
@@ -113,7 +119,7 @@ public class ImportService {
             LOG.info("Invalid redirect type", e);
             return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid redirect type", record.getRecordNumber());
         }
-
+        
         return process(srcUrl, targetUrl, site, record, seenPagesBySrcUrl, seenPagesBySrcUrlThisRun, redirectType);
 
     }
@@ -121,10 +127,18 @@ public class ImportService {
     private ImportRecordResult process(String srcUrl, String targetUrl, Site site, CSVRecord record,
                                        Map<String, Page> seenPagesBySrcUrl, Map<String, Page> seenPagesBySrcUrlThisRun,
                                        Page.RedirectType redirectType) {
+        Page.MatchType matchType;
+        try {
+            matchType = matchType(record);
+        } catch(IllegalArgumentException e) {
+            LOG.info("Invalid match type", e);
+            return new ImportRecordResult(ImportRecordResult.Type.ERROR, "Invalid match type", record.getRecordNumber());
+        }
+        
         // see if this is already in the db or not
         Page page = seenPagesBySrcUrl.get(srcUrl);
         if (page != null) {
-            ImportRecordResult unchangedResult = detectNoChangeOrLocked(targetUrl, record, page);
+            ImportRecordResult unchangedResult = detectNoChangeOrLocked(targetUrl, redirectType, matchType, record, page);
             seenPagesBySrcUrlThisRun.put(srcUrl, page);
             if (unchangedResult != null) {
                 return unchangedResult;
@@ -137,7 +151,7 @@ public class ImportService {
         page.setSite(site);
         page.setSrcUrl(srcUrl);
         page.setTargetUrl(targetUrl);
-        page.setType(Page.MatchType.EXACT);
+        page.setType(matchType);
         page.setRedirectType(redirectType);
         LOG.debug("page: {} -> {} {}", page.getSrcUrl(), page.getTargetUrl(), redirectType.toString());
 
@@ -148,7 +162,7 @@ public class ImportService {
         return new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", record.getRecordNumber());
     }
 
-    private ImportRecordResult detectNoChangeOrLocked(String targetUrl, CSVRecord record, Page page) {
+    private ImportRecordResult detectNoChangeOrLocked(String targetUrl, Page.RedirectType targetRedirectType, Page.MatchType targetMatchType, CSVRecord record, Page page) {
         // ignore locked items
         if (page.isLocked()) {
             LOG.info("Src url already mapped and locked: {} (mapped to {})", page.getSrcUrl(), page.getTargetUrl());
@@ -156,13 +170,16 @@ public class ImportService {
         }
 
         // ignore if the imported item is the same as the one already in the db
-        if (targetUrl.equals(page.getTargetUrl())) {
+        if (targetUrl.equals(page.getTargetUrl()) &&
+                targetRedirectType.equals(page.getRedirectType()) &&
+                targetMatchType.equals(page.getType())) {
             LOG.info("Src url already mapped and unchanged: {} (mapped to {})", page.getSrcUrl(), page.getTargetUrl());
             return new ImportRecordResult(ImportRecordResult.Type.NOCHANGE, "Unchanged", record.getRecordNumber());
         }
 
         return null;
     }
+    
     private String targetUrl(CSVRecord record, Site site) throws URISyntaxException {
 
         // if there is only one entry in the record then default to /
@@ -234,6 +251,22 @@ public class ImportService {
         return path;
     }
 
+    private Page.MatchType matchType(CSVRecord record) {
+        
+        if(record.size() < 4) {
+            return Page.MatchType.EXACT;
+        }
+        
+        String raw = record.get(3).trim().toUpperCase();
+        
+        if("REGEXP".equals(raw)) {
+            return Page.MatchType.PCRE_REGEXP;
+        } else {
+            //Default to exact
+            return Page.MatchType.EXACT;
+        }
+    }
+    
     private Page.RedirectType redirectType(CSVRecord record) {
 
         //If there is no redirect type specified default to a PERMANENT redirect.
@@ -246,8 +279,9 @@ public class ImportService {
         // "TEMPORARY" should be interpreted as REDIRECT
         if("TEMPORARY".equals(raw)) {
             return Page.RedirectType.REDIRECT;
+        } else {
+            //Default to PERMANENT if not recognised
+            return Page.RedirectType.PERMANENT;
         }
-
-        return Page.RedirectType.valueOf(raw);
     }
 }

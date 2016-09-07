@@ -1,9 +1,24 @@
 package org.mygovscot.decommissioned.importer;
 
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
 import org.mygovscot.decommissioned.repository.PageRepository;
@@ -11,15 +26,6 @@ import org.mygovscot.decommissioned.repository.SiteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.*;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
 
 @ContextConfiguration(classes=ImportServiceTestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,7 +39,7 @@ public class ImportServiceTest {
 
     @Autowired
     SiteRepository siteRepository;
-
+    
     @Test
     public void greenPath() {
 
@@ -203,7 +209,7 @@ public class ImportServiceTest {
     @Test
     public void tooManyRecords() {
         // ARRANGE
-        String csv = "/one, /one-redirect,PERMANENT,what am I?";
+        String csv = "/one, /one-redirect,PERMANENT,EXACT,what am I?";
         ImportResult expected = new ImportResult(
                 Collections.singletonList(new ImportRecordResult(ImportRecordResult.Type.ERROR, "Wrong Number of Fields", 1)));
 
@@ -301,5 +307,84 @@ public class ImportServiceTest {
         assertTrue(one.equals(one));
         assertTrue(one.equals(two));
         assertFalse(one.equals(one.toString()));
+    }
+    
+    @Test
+    public void importNoChange() {
+        //Attempting to import an unchanged record should fail
+        Mockito.when(pageRepository.findOneBySiteIdAndSrcUrl("prePopulated", "/one")).thenReturn(page(null, "/one", "/one-redirect"));
+        Mockito.when(pageRepository.findOneBySiteIdAndSrcUrl("prePopulated", "/two")).thenReturn(page(null, "/two", "/two-redirect"));
+        Mockito.when(pageRepository.findBySiteId("prePopulated")).thenReturn(Arrays.asList(page(null, "/one", "/one-redirect"), page(null, "/two", "/two-redirect")));
+        
+        String csv = "/one,/one-redirect";
+        List<ImportRecordResult> results = new ArrayList<>();
+        results.add(new ImportRecordResult(ImportRecordResult.Type.NOCHANGE, "Unchanged", 1));
+        ImportResult expected = new ImportResult(results);
+
+        // ACT
+        ImportResult actual = sut.importRedirects("prePopulated", csv);
+
+        // ASSERT
+        Assert.assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void importChangeToMatchType() {
+        //Attempting to import an unchanged record should fail
+        String csv = "/one,/one-redirect,,REGEXP";
+        List<ImportRecordResult> results = new ArrayList<>();
+        results.add(new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", 1));
+        ImportResult expected = new ImportResult(results);
+
+        // ACT
+        ImportResult actual = sut.importRedirects("prePopulated", csv);
+
+        // ASSERT
+        Assert.assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void importChangeToRedirectType() {
+        //Attempting to import an unchanged record should fail
+        String csv = "/one,/one-redirect,TEMPORARY";
+        List<ImportRecordResult> results = new ArrayList<>();
+        results.add(new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", 1));
+        ImportResult expected = new ImportResult(results);
+
+        // ACT
+        ImportResult actual = sut.importRedirects("prePopulated", csv);
+
+        // ASSERT
+        Assert.assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void importChangeToUrl() {
+        //Attempting to import an unchanged record should fail
+        String csv = "/one,/one-redirect-change";
+        List<ImportRecordResult> results = new ArrayList<>();
+        results.add(new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", 1));
+        ImportResult expected = new ImportResult(results);
+
+        // ACT
+        ImportResult actual = sut.importRedirects("prePopulated", csv);
+
+        // ASSERT
+        Assert.assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void importWithQuotesChangeToUrl() {
+        //Attempting to import an unchanged record should fail
+        String csv = "\"/one\",\"/one-redirect,change\"";
+        List<ImportRecordResult> results = new ArrayList<>();
+        results.add(new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", 1));
+        ImportResult expected = new ImportResult(results);
+
+        // ACT
+        ImportResult actual = sut.importRedirects("prePopulated", csv);
+
+        // ASSERT
+        Assert.assertEquals(expected, actual);
     }
 }

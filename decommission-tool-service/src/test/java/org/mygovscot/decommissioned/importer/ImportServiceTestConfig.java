@@ -1,5 +1,10 @@
 package org.mygovscot.decommissioned.importer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.mockito.Mockito;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
@@ -8,10 +13,6 @@ import org.mygovscot.decommissioned.repository.SiteRepository;
 import org.mygovscot.decommissioned.repository.WhitelistedHostRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Configuration
 public class ImportServiceTestConfig {
@@ -41,6 +42,7 @@ public class ImportServiceTestConfig {
         PageRepository pageRepository = Mockito.mock(PageRepository.class);
         Mockito.when(pageRepository.findOneBySiteIdAndSrcUrl("prePopulated", "/one")).thenReturn(page(null, "/one", "/one-redirect"));
         Mockito.when(pageRepository.findOneBySiteIdAndSrcUrl("prePopulated", "/two")).thenReturn(page(null, "/two", "/two-redirect"));
+        Mockito.when(pageRepository.findBySiteId("prePopulated")).thenReturn(Arrays.asList(page(null, "/one", "/one-redirect"), page(null, "/two", "/two-redirect")));
         return pageRepository;
     }
 
