@@ -135,6 +135,14 @@
                             </mapper>
                         </data>
                         <data>
+                            <src>${basedir}/src/deb/systemd/decommission.service</src>
+                            <type>file</type>
+                            <mapper>
+                                <type>perm</type>
+                                <prefix>/lib/systemd/system</prefix>
+                            </mapper>
+                        </data>
+                        <data>
                             <src>${project.build.directory}/dependency/decommission-tool-service-${project.version}.jar</src>
                             <dst>decommission-tool.jar</dst>
                             <type>file</type>

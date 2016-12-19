@@ -1,0 +1,12 @@
+[Unit]
+Description=Decommission service
+After=network.target
+
+[Service]
+User=decommission
+WorkingDirectory=/opt/decommission-tool
+ExecStart=/opt/decommission-tool/run.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
