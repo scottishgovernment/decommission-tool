@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=decommission
 WorkingDirectory=/opt/decommission-tool
-ExecStart=/opt/decommission-tool/run.sh
+ExecStart=/opt/decommission-tool/run
 Restart=on-failure
 
 [Install]
