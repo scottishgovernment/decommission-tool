@@ -7,6 +7,7 @@ User=decommission
 WorkingDirectory=/opt/decommission-tool
 ExecStart=/opt/decommission-tool/run
 Restart=on-failure
+SuccessExitStatus=143
 
 [Install]
 WantedBy=multi-user.target
