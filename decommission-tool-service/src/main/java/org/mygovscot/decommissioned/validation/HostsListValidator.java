@@ -21,14 +21,12 @@ public class HostsListValidator implements ConstraintValidator<HostsList, String
             return false;
         }
 
-        // space spearated list of valid hostnames
-        if (!Arrays.stream(host.trim()
-                .split(" "))
-                .allMatch(h -> h.matches(HostValidator.IP_ADDRESS_REGEX) || h.matches(HostValidator.HOST_REGEX))) {
-            return false;
-        }
+        // space separated list of valid hostnames
+        return Arrays.stream(host.trim().split(" ")).allMatch(this::validHostnameOrIPAddress);
+    }
 
-        return true;
+    boolean validHostnameOrIPAddress(String str) {
+        return str.matches(HostValidator.IP_ADDRESS_REGEX) || str.matches(HostValidator.HOST_REGEX);
     }
 
 }
