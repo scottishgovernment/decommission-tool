@@ -38,9 +38,6 @@ public class Site {
     @OneToMany(mappedBy = "site", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Page> pages;
 
-    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL)
-    private List<SuggestionsSelector> suggestionsSelectors;
-
     public String getId() {
         return id;
     }
@@ -95,14 +92,6 @@ public class Site {
 
     public void setPages(List<Page> pages) {
         this.pages = pages;
-    }
-
-    public List<SuggestionsSelector> getSuggestionsSelectors() {
-        return suggestionsSelectors;
-    }
-
-    public void setSuggestionsSelectors(List<SuggestionsSelector> suggestionsSelectors) {
-        this.suggestionsSelectors = suggestionsSelectors;
     }
 
     @Override

@@ -38,9 +38,6 @@ public class Page {
     @NotNull
     private Site site;
 
-    @OneToMany(mappedBy = "page", cascade = CascadeType.ALL)
-    private List<PageSuggestion> pageSuggestions;
-
     @NotNull(message = "Page source must be specified")
     private String srcUrl;
 
@@ -92,14 +89,6 @@ public class Page {
         return locked;
     }
 
-    public List<PageSuggestion> getPageSuggestions() {
-        return pageSuggestions;
-    }
-
-    public void setPageSuggestions(List<PageSuggestion> pageSuggestions) {
-        this.pageSuggestions = pageSuggestions;
-    }
-
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
@@ -136,7 +125,6 @@ public class Page {
                 .append(locked, page.locked)
                 .append(id, page.id)
                 .append(site, page.site)
-                .append(pageSuggestions, page.pageSuggestions)
                 .append(srcUrl, page.srcUrl)
                 .append(targetUrl, page.targetUrl)
                 .append(type, page.type)
@@ -149,7 +137,6 @@ public class Page {
         return new HashCodeBuilder(17, 37)
                 .append(id)
                 .append(site)
-                .append(pageSuggestions)
                 .append(srcUrl)
                 .append(targetUrl)
                 .append(locked)
@@ -163,7 +150,6 @@ public class Page {
         return "Page{" +
                 "id='" + id + '\'' +
                 ", site=" + site +
-                ", pageSuggestions=" + pageSuggestions +
                 ", srcUrl='" + srcUrl + '\'' +
                 ", targetUrl='" + targetUrl + '\'' +
                 ", locked=" + locked +
