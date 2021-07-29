@@ -116,7 +116,7 @@
             <data>
               <type>template</type>
               <paths>
-                <path>var/log/decommission-tool</path>
+                <path>var/log/decommission</path>
               </paths>
               <mapper>
                 <type>perm</type>

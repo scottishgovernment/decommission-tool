@@ -11,7 +11,7 @@ exec /usr/bin/java \
   -XX:+UseGCLogFileRotation \
   -XX:GCLogFileSize=1m \
   -XX:NumberOfGCLogFiles=8 \
-  -Xloggc:/var/log/decommission-tool/gc.log \
+  -Xloggc:/var/log/decommission/gc.log \
   -Dcom.sun.management.jmxremote \
   -Dcom.sun.management.jmxremote.port=18089 \
   -Dcom.sun.management.jmxremote.local.only=false \

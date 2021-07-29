@@ -10,6 +10,10 @@ adduser \
   --gecos "MyGov Site Decommissioning Tool" \
   decommission
 
+mkdir -p /var/log/decommission
+chmod 755 /var/log/decommission
+chown decommission:nogroup /var/log/decommission
+
 systemctl daemon-reload
 systemctl enable decommission
 systemctl start decommission
