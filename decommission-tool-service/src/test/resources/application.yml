@@ -16,7 +16,6 @@ spring:
     database: H2
     hibernate.ddl-auto: none
     generate-ddl: false
-    show-sql: false
       
 authentication:
     enabled: false
