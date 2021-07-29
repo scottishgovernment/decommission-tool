@@ -17,8 +17,7 @@ exec /usr/bin/java \
   -Dcom.sun.management.jmxremote.local.only=false \
   -Dcom.sun.management.jmxremote.authenticate=false \
   -Dcom.sun.management.jmxremote.ssl=false \
+  -Dlogging.config=/opt/decommission-tool/logback.xml \
   -Dlogback.configurationFile=/opt/decommission-tool/logback.xml \
   -jar \
-  /opt/decommission-tool/decommission-tool.jar \
-  >> /var/log/decommission-tool/decommission-tool.log \
-  2>&1
+  /opt/decommission-tool/decommission-tool.jar

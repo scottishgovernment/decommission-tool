@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 User=decommission
+SyslogIdentifier=decommission
 WorkingDirectory=/opt/decommission-tool
 ExecStart=/opt/decommission-tool/run
 Restart=on-failure
