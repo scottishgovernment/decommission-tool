@@ -19,7 +19,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ComponentScan
 public class DecommissionToolApp {
 
-    private static final Logger log =
+    private static final Logger LOG =
             LoggerFactory.getLogger(DecommissionToolApp.class);
 
     DecommissionToolApp() {
@@ -33,7 +33,7 @@ public class DecommissionToolApp {
             application.run(args);
             Dump.main();
         } catch (Throwable t) {
-            log.error("Application failed", t);
+            LOG.error("Application failed", t);
         }
     }
 
