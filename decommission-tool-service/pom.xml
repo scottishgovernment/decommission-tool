@@ -15,37 +15,36 @@
   <name>Decommissioning Tool REST Service</name>
 
   <properties>
-    <spring-boot.version>1.2.2.RELEASE</spring-boot.version>
-    <spring-data-jpa.version>1.6.2.RELEASE</spring-data-jpa.version>
-    <spring-data-rest-webmvc.version>2.2.2.RELEASE</spring-data-rest-webmvc.version>
-    <spring.version>4.1.6.RELEASE</spring.version>
-    <sonar.exclusions>**/SecurityConfig.java</sonar.exclusions>
+    <spring-boot.version>2.5.3</spring-boot.version>
+    <spring-data-rest-webmvc.version>3.5.3</spring-data-rest-webmvc.version>
+    <spring.version>5.3.9</spring.version>
+    <sonar.exclusions>**/Dump.java,**/Initialiser.java</sonar.exclusions>
   </properties>
 
   <dependencies>
 
     <dependency>
-      <groupId>org.mygovscot.beta</groupId>
-      <artifactId>beta-config</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>6.0.3.Final</version>
     </dependency>
 
     <dependency>
-      <groupId>org.mygovscot.beta</groupId>
-      <artifactId>authentication-spring</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mygovscot.utils</groupId>
-      <artifactId>mygovscot_util_servlet</artifactId>
-      <version>1.0.5-SNAPSHOT</version>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.29</version>
     </dependency>
 
     <dependency>
       <groupId>net.logstash.logback</groupId>
       <artifactId>logstash-logback-encoder</artifactId>
-      <version>4.3</version>
+      <version>6.6</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot</artifactId>
+      <version>${spring-boot.version}</version>
     </dependency>
 
     <dependency>
@@ -61,12 +60,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-      <version>${spring-boot.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-rest-webmvc</artifactId>
       <version>${spring-data-rest-webmvc.version}</version>
@@ -75,37 +68,50 @@
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
-      <version>4.2.0</version>
+      <version>6.5.5</version>
     </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.4-1201-jdbc41</version>
+      <version>42.2.23.jre7</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.3.2</version>
+      <version>3.12.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-csv</artifactId>
-      <version>1.1</version>
+      <version>1.9.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.3.6</version>
+      <version>4.5.13</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <version>2.6.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test</artifactId>
+      <version>${spring-boot.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -118,21 +124,21 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.4.183</version>
+      <version>1.4.200</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
-      <version>1.10.8</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.jayway.jsonpath</groupId>
-      <artifactId>json-path</artifactId>
-      <version>2.0.0</version>
+      <version>1.10.19</version>
       <scope>test</scope>
     </dependency>
 
@@ -140,6 +146,7 @@
 
   <dependencyManagement>
     <dependencies>
+
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
@@ -147,6 +154,7 @@
         <scope>import</scope>
         <type>pom</type>
       </dependency>
+
     </dependencies>
   </dependencyManagement>
 

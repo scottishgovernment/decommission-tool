@@ -1,10 +1,7 @@
 package org.mygovscot.decommissioned;
 
-import org.mygovscot.beta.config.BetaConfigInitializer;
-import org.mygovscot.beta.config.Dump;
-import org.mygovscot.util.error.toplevelhandlers.SLF4JStrictTopLevelErrorHandler;
-import org.mygovscot.util.error.toplevelhandlers.TopLevelErrorHandler;
-import org.mygovscot.util.servlet.filter.ErrorHandlerFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -15,16 +12,15 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import javax.servlet.Filter;
-
 @Configuration
 @EnableJpaRepositories
 @EnableAutoConfiguration
 @EnableWebMvc
 @ComponentScan
 public class DecommissionToolApp {
-    /** For logging all unhandled exceptions. */
-    public static final TopLevelErrorHandler TOP_LEVEL_ERROR_HANDLER = new SLF4JStrictTopLevelErrorHandler();
+
+    private static final Logger log =
+            LoggerFactory.getLogger(DecommissionToolApp.class);
 
     DecommissionToolApp() {
         // Spring requires that constructor is not private.
@@ -33,11 +29,11 @@ public class DecommissionToolApp {
     public static void main(String[] args) {
         try {
             SpringApplication application = new SpringApplicationBuilder(DecommissionToolApp.class).application();
-            application.addInitializers(new BetaConfigInitializer());
+            application.addInitializers(new Initialiser());
             application.run(args);
-            Dump.main(args);
+            Dump.main();
         } catch (Throwable t) {
-            TOP_LEVEL_ERROR_HANDLER.handleThrowable(t);
+            log.error("Application failed", t);
         }
     }
 
@@ -51,8 +47,4 @@ public class DecommissionToolApp {
         return taskExecutor;
     }
 
-    @Bean
-    public Filter errorHandlerFilter() {
-        return new ErrorHandlerFilter();
-    }
 }

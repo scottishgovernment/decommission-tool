@@ -49,7 +49,7 @@ public class ImportService {
 
     public ImportResult importRedirects(String siteId, String csvSource) {
         InputStream is = new ByteArrayInputStream(csvSource.getBytes(StandardCharsets.UTF_8));
-        Site site = siteRepository.findOne(siteId);
+        Site site = siteRepository.getById(siteId);
 
         if (site == null) {
             throw new IllegalArgumentException("No such site "+siteId);

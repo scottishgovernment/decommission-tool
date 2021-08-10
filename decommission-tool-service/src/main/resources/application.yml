@@ -20,9 +20,6 @@ spring:
     database: POSTGRESQL
     hibernate.ddl-auto: none
     generate-ddl: false
+  flyway:
+    table: schema_version
 
-authentication:
-    enabled: false
-    endpoint: http://localhost:8086/security/
-suggester:
-    searchUrl: http://localhost:8082/direct/?size=5&q=

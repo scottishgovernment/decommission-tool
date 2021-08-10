@@ -32,7 +32,8 @@ public class ImportServiceTestConfig {
 
         SiteRepository siteRepository = Mockito.mock(SiteRepository.class);
         for (Site s : sites) {
-            Mockito.when(siteRepository.findOne(s.getId())).thenReturn(s);
+            String id = s.getId();
+            Mockito.when(siteRepository.getById(id)).thenReturn(s);
         }
         return siteRepository;
     }

@@ -55,7 +55,7 @@ public class ImportServiceTest {
         sut.importRedirects("greenPath", csv);
 
         // ASSERT
-        Site site = siteRepository.findOne("greenPath");
+        Site site = siteRepository.getById("greenPath");
         Page page1 = page(site, "/onegp", "/one-redirect", Page.RedirectType.PERMANENT);
         Page page2 = page(site, "/twogp", "/two-redirect", Page.RedirectType.PERMANENT);
         Page page3 = page(site, "/threegp", "/three-redirect", Page.RedirectType.REDIRECT);
@@ -79,7 +79,7 @@ public class ImportServiceTest {
         sut.importRedirects("morethanonehost", csv);
 
         // ASSERT
-        Site site = siteRepository.findOne("morethanonehost");
+        Site site = siteRepository.getById("morethanonehost");
         Page page1 = page(site, "/onemulti", "/one-redirect");
         Page page2 = page(site, "/twomulti", "/two-redirect");
         verify(pageRepository).save(eq(page1));
@@ -98,7 +98,7 @@ public class ImportServiceTest {
         sut.importRedirects("emptyTarget", csv);
 
         // ASSERT
-        Site site = siteRepository.findOne("emptyTarget");
+        Site site = siteRepository.getById("emptyTarget");
         Page page1 = page(site, "/oneemp", "/");
         Page page2 = page(site, "/twoemp", "/two-redirect");
         verify(pageRepository).save(eq(page1));
@@ -115,7 +115,7 @@ public class ImportServiceTest {
         sut.importRedirects("withparams", csv);
 
         // ASSERT
-        Site site = siteRepository.findOne("withparams");
+        Site site = siteRepository.getById("withparams");
         Page page1 = page(site, "/withparams", "/");
         verify(pageRepository).save(eq(page1));
     }
@@ -131,7 +131,7 @@ public class ImportServiceTest {
         sut.importRedirects("emptyTarget", csv);
 
         // ASSERT
-        Site site = siteRepository.findOne("emptyTarget");
+        Site site = siteRepository.getById("emptyTarget");
         Page page1 = page(site, "/one", "/");
         Page page2 = page(site, "/two", "/two-redirect");
         verify(pageRepository).save(eq(page1));
@@ -149,7 +149,7 @@ public class ImportServiceTest {
         sut.importRedirects("greenPathWithHost", csv);
 
         // ASSERT
-        Site site = siteRepository.findOne("greenPathWithHost");
+        Site site = siteRepository.getById("greenPathWithHost");
         Page page1 = page(site, "/one", "/one-redirect");
         Page page2 = page(site, "/two", "/two-redirect");
         verify(pageRepository).save(eq(page1));
@@ -239,7 +239,7 @@ public class ImportServiceTest {
     @Test
     public void srcUrlContainingEncodesSpaces() {
         // ARRANGE
-        Site site = siteRepository.findOne("prePopulated");
+        Site site = siteRepository.getById("prePopulated");
         String csv = "/one%20, /one-redirect\n" +
                 "/two%20three, /two-redirect";
 

@@ -11,5 +11,5 @@ public interface WhitelistedHostRepository extends JpaRepository<WhitelistedHost
 
     List<WhitelistedHost> findAll();
 
-    WhitelistedHost findOne(String id);
+    WhitelistedHost getById(String id);
 }

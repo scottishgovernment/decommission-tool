@@ -3,7 +3,7 @@ application:
 
 logging:
   level:
-    org.springframework.web: WARN
+    org.springframework: WARN
     org.mygovscot: INFO
 
 spring:
@@ -16,8 +16,3 @@ spring:
     database: H2
     hibernate.ddl-auto: none
     generate-ddl: false
-      
-authentication:
-    enabled: false
-    endpoint: http://localhost:8086/security/
-    

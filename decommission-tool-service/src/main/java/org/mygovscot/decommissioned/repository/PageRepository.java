@@ -16,8 +16,6 @@ public interface PageRepository extends JpaRepository<Page, String> {
 
     List<Page> findAll();
 
-    Page findOne(String id);
-
     Page findOneBySiteIdAndSrcUrl(String siteId, String srcUrl);
 
     List<Page> findBySiteId(String siteId);
