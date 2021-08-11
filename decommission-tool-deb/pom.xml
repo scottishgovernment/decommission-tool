@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.mygovscot.decommission-tool</groupId>
     <artifactId>decommission-tool</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.99</version>
   </parent>
 
   <artifactId>decommission-tool-deb</artifactId>
