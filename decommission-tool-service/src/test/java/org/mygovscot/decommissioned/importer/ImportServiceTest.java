@@ -1,20 +1,5 @@
 package org.mygovscot.decommissioned.importer;
 
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,21 +8,30 @@ import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
 import org.mygovscot.decommissioned.repository.PageRepository;
 import org.mygovscot.decommissioned.repository.SiteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.inject.Inject;
+import java.util.*;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
 
 @ContextConfiguration(classes=ImportServiceTestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ImportServiceTest {
 
-    @Autowired
+    @Inject
     ImportService sut;
 
-    @Autowired
+    @Inject
     PageRepository pageRepository;
 
-    @Autowired
+    @Inject
     SiteRepository siteRepository;
     
     @Test

@@ -13,13 +13,14 @@ import org.mygovscot.decommissioned.repository.SiteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,13 +41,13 @@ public class RestIT {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    @Autowired
+    @Inject
     SiteRepository siteRepository;
 
-    @Autowired
+    @Inject
     PageRepository pageRepository;
 
-    @Autowired
+    @Inject
     WebApplicationContext context;
 
     MockMvc mvc;

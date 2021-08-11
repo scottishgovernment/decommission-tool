@@ -1,24 +1,5 @@
 package org.mygovscot.decommissioned.importer;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -30,21 +11,33 @@ import org.mygovscot.decommissioned.repository.SiteRepository;
 import org.mygovscot.decommissioned.repository.WhitelistedHostRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.*;
 
 @Component
 public class ImportService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImportService.class);
 
-    @Autowired
+    @Inject
     private PageRepository pageRepository;
 
-    @Autowired
+    @Inject
     private SiteRepository siteRepository;
 
-    @Autowired
+    @Inject
     private WhitelistedHostRepository whitelistedHostRepository;
 
     public ImportResult importRedirects(String siteId, String csvSource) {
