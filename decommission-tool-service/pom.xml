@@ -6,11 +6,11 @@
   <parent>
     <groupId>org.mygovscot.decommission-tool</groupId>
     <artifactId>decommission-tool</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.101</version>
   </parent>
 
   <artifactId>decommission-tool-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.101</version>
 
   <name>Decommissioning Tool REST Service</name>
 
