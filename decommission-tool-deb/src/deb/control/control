@@ -4,5 +4,5 @@ Section: mygov
 Priority: optional
 Architecture: all
 Description: Stores redirects for decommissioned sites.
-Maintainer: tim.squires@scotland.gsi.gov.uk
-Depends: java8-runtime-headless
+Maintainer: martin.ellis@gov.scot
+Depends: java11-runtime-headless

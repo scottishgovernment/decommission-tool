@@ -6,6 +6,7 @@ After=network.target
 User=decommission
 SyslogIdentifier=decommission
 WorkingDirectory=/opt/decommission-tool
+EnvironmentFile=-/etc/default/decommission-tool
 ExecStart=/opt/decommission-tool/run
 Restart=on-failure
 SuccessExitStatus=143

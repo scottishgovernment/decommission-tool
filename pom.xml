@@ -7,7 +7,7 @@
   <parent>
     <groupId>scot.mygov</groupId>
     <artifactId>mygov-parent</artifactId>
-    <version>5</version>
+    <version>6</version>
   </parent>
 
   <groupId>org.mygovscot.decommission-tool</groupId>
@@ -59,6 +59,7 @@
           <execution>
             <goals>
               <goal>prepare-agent</goal>
+              <goal>report</goal>
             </goals>
           </execution>
         </executions>
