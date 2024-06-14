@@ -8,14 +8,16 @@ logging:
 
 server:
     port: 8089
-    
+
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost/decommission
     username: decommission
     password: decommission
-    poolSize: 20
+    hikari:
+      maximumPoolSize: 2
+
   jpa:
     database: POSTGRESQL
     hibernate.ddl-auto: none
