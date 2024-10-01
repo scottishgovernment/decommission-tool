@@ -1,5 +1,6 @@
 package org.mygovscot.decommissioned.bulk;
 
+import jakarta.transaction.Transactional;
 import org.mygovscot.decommissioned.repository.PageRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 @Controller
 @RequestMapping("/redirects/bulk")
@@ -38,4 +38,3 @@ public class BulkResource {
         pageRepository.bulkSetTarget(request.getIds(), request.getTargetUrl());
     }
 }
-

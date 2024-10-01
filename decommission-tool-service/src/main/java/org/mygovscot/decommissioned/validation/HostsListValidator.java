@@ -1,9 +1,9 @@
 package org.mygovscot.decommissioned.validation;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.util.StringUtils;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 
 public class HostsListValidator implements ConstraintValidator<HostsList, String> {

@@ -1,5 +1,7 @@
 package org.mygovscot.decommissioned.validation;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.mygovscot.decommissioned.model.Page;
 import org.mygovscot.decommissioned.model.Site;
 import org.mygovscot.decommissioned.model.WhitelistedHost;
@@ -16,8 +18,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;

@@ -1,18 +1,17 @@
 package org.mygovscot.decommissioned.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.mygovscot.decommissioned.validation.PathOrURL;
 import org.mygovscot.decommissioned.validation.SrcUrl;
-
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @SrcUrl(message="Page source should be a valid URL, path or Perl compatible Regexp")
@@ -120,8 +119,8 @@ public class Page {
 
         return new EqualsBuilder()
                 .append(locked, page.locked)
-                .append(id, page.id)
-                .append(site, page.site)
+                .append(getId(), page.getId())
+                .append(getSite(), page.getSite())
                 .append(srcUrl, page.srcUrl)
                 .append(targetUrl, page.targetUrl)
                 .append(type, page.type)
@@ -132,8 +131,8 @@ public class Page {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(id)
-                .append(site)
+                .append(getId())
+                .append(getSite())
                 .append(srcUrl)
                 .append(targetUrl)
                 .append(locked)

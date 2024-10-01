@@ -44,6 +44,8 @@ public class ImportServiceTestConfig {
         Mockito.when(pageRepository.findOneBySiteIdAndSrcUrl("prePopulated", "/one")).thenReturn(page(null, "/one", "/one-redirect"));
         Mockito.when(pageRepository.findOneBySiteIdAndSrcUrl("prePopulated", "/two")).thenReturn(page(null, "/two", "/two-redirect"));
         Mockito.when(pageRepository.findBySiteId("prePopulated")).thenReturn(Arrays.asList(page(null, "/one", "/one-redirect"), page(null, "/two", "/two-redirect")));
+        Mockito.when(pageRepository.findBySiteId("greenPath")).thenAnswer(x -> new ArrayList<>());
+        Mockito.when(pageRepository.findBySiteId("wrongHost")).thenAnswer(x -> new ArrayList<>());
         return pageRepository;
     }
 

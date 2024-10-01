@@ -12,11 +12,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
@@ -55,7 +59,7 @@ public class ImportServiceTest {
         Page page3 = page(site, "/threegp", "/three-redirect", Page.RedirectType.REDIRECT);
         Page page4 = page(site, "/fourgp", "/four-redirect", Page.RedirectType.REDIRECT);
         Page page5 = page(site, "/fivegp", "/five-redirect", Page.RedirectType.PERMANENT);
-        verify(pageRepository).save(eq(page1));
+        verify(pageRepository).save(page1);
 //        verify(pageRepository).save(eq(page2));
 //        verify(pageRepository).save(eq(page3));
 //        verify(pageRepository).save(eq(page4));
@@ -76,8 +80,8 @@ public class ImportServiceTest {
         Site site = siteRepository.getById("morethanonehost");
         Page page1 = page(site, "/onemulti", "/one-redirect");
         Page page2 = page(site, "/twomulti", "/two-redirect");
-        verify(pageRepository).save(eq(page1));
-        verify(pageRepository).save(eq(page2));
+        verify(pageRepository).save(page1);
+        verify(pageRepository).save(page2);
     }
 
     @Test
@@ -95,8 +99,8 @@ public class ImportServiceTest {
         Site site = siteRepository.getById("emptyTarget");
         Page page1 = page(site, "/oneemp", "/");
         Page page2 = page(site, "/twoemp", "/two-redirect");
-        verify(pageRepository).save(eq(page1));
-        verify(pageRepository).save(eq(page2));
+        verify(pageRepository).save(page1);
+        verify(pageRepository).save(page2);
     }
 
     @Test
@@ -111,7 +115,7 @@ public class ImportServiceTest {
         // ASSERT
         Site site = siteRepository.getById("withparams");
         Page page1 = page(site, "/withparams", "/");
-        verify(pageRepository).save(eq(page1));
+        verify(pageRepository).save(page1);
     }
 
     @Test
@@ -128,8 +132,8 @@ public class ImportServiceTest {
         Site site = siteRepository.getById("emptyTarget");
         Page page1 = page(site, "/one", "/");
         Page page2 = page(site, "/two", "/two-redirect");
-        verify(pageRepository).save(eq(page1));
-        verify(pageRepository).save(eq(page2));
+        verify(pageRepository).save(page1);
+        verify(pageRepository).save(page2);
     }
 
     @Test
@@ -146,8 +150,8 @@ public class ImportServiceTest {
         Site site = siteRepository.getById("greenPathWithHost");
         Page page1 = page(site, "/one", "/one-redirect");
         Page page2 = page(site, "/two", "/two-redirect");
-        verify(pageRepository).save(eq(page1));
-        verify(pageRepository).save(eq(page2));
+        verify(pageRepository).save(page1);
+        verify(pageRepository).save(page2);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -226,8 +230,8 @@ public class ImportServiceTest {
         sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        verify(pageRepository, never()).save(eq(page(null, "/one", "/one-redirect")));
-        verify(pageRepository, never()).save(eq(page(null, "/two", "/two-redirect")));
+        verify(pageRepository, never()).save(page(null, "/one", "/one-redirect"));
+        verify(pageRepository, never()).save(page(null, "/two", "/two-redirect"));
     }
 
     @Test
@@ -241,8 +245,8 @@ public class ImportServiceTest {
         sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        verify(pageRepository).save(eq(page(site, "/one%20", "/one-redirect")));
-        verify(pageRepository).save(eq(page(site, "/two%20three", "/two-redirect")));
+        verify(pageRepository).save(page(site, "/one%20", "/one-redirect"));
+        verify(pageRepository).save(page(site, "/two%20three", "/two-redirect"));
     }
 
     @Test

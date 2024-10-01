@@ -17,6 +17,8 @@ spring:
     password: decommission
     hikari:
       maximumPoolSize: 2
+      minimumIdle: 1
+      idleTimeout: 10000
 
   jpa:
     database: POSTGRESQL
