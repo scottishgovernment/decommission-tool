@@ -7,7 +7,7 @@ import org.junit.Test;
 public class HostValidatorTest {
 
     @Test
-    public void testIsValid() throws Exception {
+    public void testIsValid() {
         HostValidator sut = new HostValidator();
         sut.initialize(null);
 

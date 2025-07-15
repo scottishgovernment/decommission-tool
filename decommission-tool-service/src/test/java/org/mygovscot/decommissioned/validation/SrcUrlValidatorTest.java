@@ -9,7 +9,7 @@ import org.mygovscot.decommissioned.model.Page;
 public class SrcUrlValidatorTest {
 
     @Test
-    public void testIsValid() throws Exception {
+    public void testIsValid() {
         SrcUrlValidator validator = new SrcUrlValidator();
         assertTrue(validator.isValid(page(Page.MatchType.EXACT, "/"), null));
         assertTrue(validator.isValid(page(Page.MatchType.EXACT, "/path/with/filename.html"), null));

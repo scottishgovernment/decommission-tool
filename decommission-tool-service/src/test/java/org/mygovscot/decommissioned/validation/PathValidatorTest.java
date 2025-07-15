@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 public class PathValidatorTest {
 
     @Test
-    public void testIsValid() throws Exception {
+    public void testIsValid() {
         PathValidator pathValidator = new PathValidator();
         assertTrue(pathValidator.isValid("/", null));
         assertTrue(pathValidator.isValid("/path", null));

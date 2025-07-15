@@ -1,6 +1,5 @@
 package org.mygovscot.decommissioned.importer;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -14,8 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mygovscot.decommissioned.importer.ImportServiceTestConfig.page;
@@ -171,7 +169,7 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("invalidURI", csv);
 
         // ASSERT
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -186,7 +184,7 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("invalidURI", csv);
 
         // ASSERT
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -200,7 +198,7 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("wrongHost", csv);
 
         // ASSERT
-        Assert.assertEquals(actual, expected);
+        assertEquals(actual, expected);
     }
 
     @Test
@@ -215,7 +213,7 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("greenPath", csv);
 
         // ASSERT
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -266,7 +264,7 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("invalidURI", csv);
 
         // ASSERT
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -325,7 +323,7 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
     
     @Test
@@ -340,7 +338,7 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
     
     @Test
@@ -355,7 +353,7 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
     
     @Test
@@ -387,6 +385,7 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
+
 }

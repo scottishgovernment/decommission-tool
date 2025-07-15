@@ -7,7 +7,7 @@ import org.junit.Test;
 public class PathOrURLValidatorTest {
 
     @Test
-    public void testIsValid() throws Exception {
+    public void testIsValid() {
         PathOrURLValidator sut = new PathOrURLValidator();
         assertTrue(sut.isValid("/", null));
         assertTrue(sut.isValid("/path", null));
