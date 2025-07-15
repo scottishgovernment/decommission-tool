@@ -35,14 +35,14 @@ public class ImportServiceTest {
     
     @Test
     public void greenPath() {
-
         // ARRANGE
-        String csv = "/onegp, /one-redirect\n" +
-                "/twogp, /two-redirect\n" +
-                "/threegp, /three-redirect, TEMPORARY\n" +
-                "/fourgp, /four-redirect, TEMPORARY\n" +
-                "/fivegp, /five-redirect, PERMANENT"
-                ;
+        String csv = """
+                /onegp, /one-redirect
+                /twogp, /two-redirect
+                /threegp, /three-redirect, TEMPORARY
+                /fourgp, /four-redirect, TEMPORARY
+                /fivegp, /five-redirect, PERMANENT
+                """;
 
         // ACT
         sut.importRedirects("greenPath", csv);
@@ -63,10 +63,11 @@ public class ImportServiceTest {
 
     @Test
     public void greenPathMultipleHosts() {
-
         // ARRANGE
-        String csv = "http://www.multi.com/onemulti, /one-redirect\n" +
-                "http://multi.com/twomulti, /two-redirect";
+        String csv = """
+                http://www.multi.com/onemulti, /one-redirect
+                http://multi.com/twomulti, /two-redirect
+                """;
 
         // ACT
         sut.importRedirects("morethanonehost", csv);
@@ -81,11 +82,11 @@ public class ImportServiceTest {
 
     @Test
     public void emptyTargetDefaultsToHomePage() {
-
         // ARRANGE
-        String csv =
-                "/oneemp,\n" +
-                "/twoemp, /two-redirect";
+        String csv = """
+                /oneemp,
+                /twoemp, /two-redirect
+                """;
 
         // ACT
         sut.importRedirects("emptyTarget", csv);
@@ -117,8 +118,10 @@ public class ImportServiceTest {
     public void noTargetColumnDefaultsToHomePage() {
 
         // ARRANGE
-        String csv =
-                "/one\n" + "/two, /two-redirect";
+        String csv = """
+                /one
+                /two, /two-redirect
+                """;
 
         // ACT
         sut.importRedirects("emptyTarget", csv);
@@ -133,10 +136,11 @@ public class ImportServiceTest {
 
     @Test
     public void greenPathWithFullyQualifiedUrl() {
-
         // ARRANGE
-        String csv = "http://www.greenpath.com/one, /one-redirect\n" +
-                "http://www.greenpath.com/two, /two-redirect";
+        String csv = """
+                http://www.greenpath.com/one, /one-redirect
+                http://www.greenpath.com/two, /two-redirect
+                """;
 
         // ACT
         sut.importRedirects("greenPathWithHost", csv);
@@ -233,8 +237,10 @@ public class ImportServiceTest {
     public void srcUrlContainingEncodesSpaces() {
         // ARRANGE
         Site site = siteRepository.getById("prePopulated");
-        String csv = "/one%20, /one-redirect\n" +
-                "/two%20three, /two-redirect";
+        String csv = """
+                /one%20, /one-redirect
+                /two%20three, /two-redirect
+                """;
 
         // ACT
         sut.importRedirects("prePopulated", csv);
@@ -246,10 +252,11 @@ public class ImportServiceTest {
 
     @Test
     public void duplicateSrcURIRecorded() {
-
         // ARRANGE
-        String csv = "/one,/to\n"
-                + "/one,/to";
+        String csv = """
+                /one,/to
+                /one,/to
+                """;
         List<ImportRecordResult> results = new ArrayList<>();
         results.add(new ImportRecordResult(ImportRecordResult.Type.DUPLICATE, "srcUrl appears more than once in this file", 2));
         results.add(new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", 1));
@@ -363,13 +370,15 @@ public class ImportServiceTest {
         ImportResult actual = sut.importRedirects("prePopulated", csv);
 
         // ASSERT
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
     
     @Test
     public void importWithQuotesChangeToUrl() {
         //Attempting to import an unchanged record should fail
-        String csv = "\"/one\",\"/one-redirect,change\"";
+        String csv = """
+                "/one","/one-redirect,change"
+                """;
         List<ImportRecordResult> results = new ArrayList<>();
         results.add(new ImportRecordResult(ImportRecordResult.Type.SUCCESS, "", 1));
         ImportResult expected = new ImportResult(results);
