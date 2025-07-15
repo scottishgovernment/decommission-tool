@@ -12,12 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +40,7 @@ public class ImportServiceTest {
         String csv = "/onegp, /one-redirect\n" +
                 "/twogp, /two-redirect\n" +
                 "/threegp, /three-redirect, TEMPORARY\n" +
-                "/fourgp, /four-redirect, REDIRECT\n" +
+                "/fourgp, /four-redirect, TEMPORARY\n" +
                 "/fivegp, /five-redirect, PERMANENT"
                 ;
 
@@ -60,10 +55,10 @@ public class ImportServiceTest {
         Page page4 = page(site, "/fourgp", "/four-redirect", Page.RedirectType.REDIRECT);
         Page page5 = page(site, "/fivegp", "/five-redirect", Page.RedirectType.PERMANENT);
         verify(pageRepository).save(page1);
-//        verify(pageRepository).save(eq(page2));
-//        verify(pageRepository).save(eq(page3));
-//        verify(pageRepository).save(eq(page4));
-//        verify(pageRepository).save(eq(page5));
+        verify(pageRepository).save(page2);
+        verify(pageRepository).save(page3);
+        verify(pageRepository).save(page4);
+        verify(pageRepository).save(page5);
     }
 
     @Test
