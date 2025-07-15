@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 public class HostsListValidatorTest {
 
     @Test
-    public void testIsValid() throws Exception {
+    public void testIsValid() {
         HostsListValidator hostValidator = new HostsListValidator();
         hostValidator.initialize(null);
 
