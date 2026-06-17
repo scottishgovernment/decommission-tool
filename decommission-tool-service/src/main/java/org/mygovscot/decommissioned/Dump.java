@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 
 public class Dump {
 
-    private static Logger log = LoggerFactory.getLogger(Dump.class);
+    private static Logger LOG = LoggerFactory.getLogger(Dump.class);
 
     public static void main() {
         AnnotationConfigApplicationContext ctx =
@@ -35,7 +35,7 @@ public class Dump {
                 }
             }
         }
-        log.info("Configuration:\n{}", builder);
+        LOG.info("Configuration:\n{}", builder);
     }
 
 }

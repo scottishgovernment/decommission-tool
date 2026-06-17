@@ -1,6 +1,7 @@
 package org.mygovscot.decommissioned.model;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +25,7 @@ public class Site {
 
     @NotNull(message = "Please specify a host (or hosts)")
     @HostsList(message = "HostsList must be a space separated list of valid host or ip address")
+    @Column(unique = true)
     private String host;
 
     @NotNull(message = "Please specify a name")
