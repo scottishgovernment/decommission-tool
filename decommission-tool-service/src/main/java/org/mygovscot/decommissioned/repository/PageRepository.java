@@ -22,7 +22,7 @@ public interface PageRepository extends JpaRepository<Page, String> {
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Modifying
     @Query("delete from Page where id = :id and locked = false")
-    void delete(@Param("id")String id);
+    void deleteById(@Param("id") String id);
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Modifying
